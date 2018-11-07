@@ -15,6 +15,8 @@
 						'username' 			=> $post->username,
 						'status' 			=> 1,
 						'register_code' 	=> $gen,
+						'status_akun'		=> '1',
+						'verify_date'		=> date("Y-m-d H:i:s"),
 						'create_date' 		=> date("Y-m-d H:i:s"),
 					);
 			$this->db->insert('dk_company',$data1);
@@ -58,6 +60,23 @@
 							'perusahaan'	=> $id_ref,
 						);
 			$this->db->insert('dk_user',$data5);
+			
+			$query2	= "select *, $id_jab as jabatan, $id_ref as perusahaan from dk_menu_akses_master";
+			$query2	= $this->db->query($query2);
+			if($query2->num_rows() > 0){
+				$res2 = $query2->result();
+				foreach($res2 as $row){
+					$data = array(
+									'jabatan'		=> $row->jabatan,
+									'perusahaan'	=> $row->perusahaan,
+									'id_menu'		=> $row->id_menu,
+									'r'				=> $row->r,
+									'u'				=> $row->u,
+									'd'				=> $row->d,
+								);
+					$this->db->insert('dk_menu_akses',$data);
+				}
+			}
 			
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -111,22 +130,22 @@
 				$perusahaan = $res[0]->perusahaan;
 				$jabatan =  $res[0]->jabatan;
 				
-				$query2	= "select *, $jabatan as jabatan, $perusahaan as perusahaan from dk_menu_akses_master";
-				$query2	= $this->db->query($query2);
-				if($query2->num_rows() > 0){
-					$res2 = $query2->result();
-					foreach($res2 as $row){
-						$data = array(
-										'jabatan'		=> $row->jabatan,
-										'perusahaan'	=> $row->perusahaan,
-										'id_menu'		=> $row->id_menu,
-										'r'				=> $row->r,
-										'u'				=> $row->u,
-										'd'				=> $row->d,
-									);
-						$this->db->insert('dk_menu_akses',$data);
-					}
-				}
+				$data = array(
+								'r'				=> 'Y',
+								'u'				=> 'Y',
+								'd'				=> 'Y',
+							);
+				$this->db->where('jabatan',$jabatan);
+				$this->db->where('perusahaan',$perusahaan);
+				$this->db->update('dk_menu_akses',$data);
+				
+				$datareg = array(
+								'status_akun'	=> '1',
+								'verify_date'	=> date("Y-m-d H:i:s")
+							);
+				
+				$this->db->where('id',$perusahaan);
+				$this->db->update('dk_company',$datareg);
 				
 				$query2	= "select *, $jabatan as jabatan, $perusahaan as perusahaan from dk_account_master";
 				$query2	= $this->db->query($query2);

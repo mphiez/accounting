@@ -1,4 +1,6 @@
 <?php $this->load->view('header');?>
+
+
     <style>
   .GaugeMeter{
     Position:        Relative;
@@ -285,7 +287,7 @@
             <!-- /.box-header -->
             <div class="box-body no-padding">
 				<div class="col-md-12">
-					<div id="container" style="height:400px"></div>
+					<canvas id="myChart"></canvas>
 				</div>
 				<div class="col-md-6">
 					<div class="box box-danger" style="border-top-color:#5abede !important;">
@@ -327,7 +329,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
-				<div id="terhutang"></div>
+				<canvas id="myChartLine"></canvas>
             </div>
             <!-- /.box-footer -->
           </div>
@@ -337,7 +339,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
-				<div id="piutang"></div>
+				<canvas id="myChartMultiBar"></canvas>
             </div>
             <!-- /.box-body -->
             <div class="box-footer text-center">
@@ -399,7 +401,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
-				
+				<canvas id="myChartRadar"></canvas>
             </div>
             <!-- /.box-footer -->
           </div>
@@ -412,7 +414,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
-				
+				<canvas id="myChartDonut"></canvas>
             </div>
             <!-- /.box-footer -->
           </div>
@@ -513,6 +515,229 @@ $total_year_ach = (($total3/$target_year)*100);
 <script>
 	$(document).ready(function(){
 		
+		
+		var ctx = document.getElementById("myChart").getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+				datasets: [{
+					label: '# of Votes',
+					//data: [12, 19, 3, 5, 2, 3],
+					data: [12, 19, 3, 5, 2, 3],
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.2)',
+						'rgba(54, 162, 235, 0.2)',
+						'rgba(255, 206, 86, 0.2)',
+						'rgba(75, 192, 192, 0.2)',
+						'rgba(153, 102, 255, 0.2)',
+						'rgba(255, 159, 64, 0.2)'
+					],
+					borderColor: [
+						'rgba(255,99,132,1)',
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 206, 86, 1)',
+						'rgba(75, 192, 192, 1)',
+						'rgba(153, 102, 255, 1)',
+						'rgba(255, 159, 64, 1)'
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true
+						}
+					}]
+				}
+			}
+		});
+		
+		var barChartData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(215, 130, 64, 0.2)'
+				],
+				yAxisID: 'y-axis-1',
+				data: [13, 20, 5, 3, 5, 9, 2]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(215, 130, 64, 0.2)'
+				],
+				yAxisID: 'y-axis-2',
+				data: [12, 19, 3, 5, 2, 3, 4]
+			}]
+
+		};
+		
+		window.onload = function() {
+			
+			var ctx = document.getElementById('myChartMultiBar').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart - Multi Axis'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: true
+					},
+					scales: {
+						yAxes: [{
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'left',
+							id: 'y-axis-1',
+						}, {
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'right',
+							id: 'y-axis-2',
+							gridLines: {
+								drawOnChartArea: false
+							}
+						}],
+					}
+				}
+			});
+			
+			var ctx = document.getElementById('myChartDonut').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'pie',
+				data: barChartData,
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Chart.js donut Chart - Multi Axis'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: true
+					},
+					scales: {
+						yAxes: [{
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'left',
+							id: 'y-axis-1',
+						}, {
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'right',
+							id: 'y-axis-2',
+							gridLines: {
+								drawOnChartArea: false
+							}
+						}],
+					}
+				}
+			});
+			
+			
+			var barChartDataRadar = {
+				labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+				datasets: [{
+					label: 'Dataset 1',
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.2)',
+					],
+					yAxisID: 'y-axis-1',
+					data: [13, 20, 5, 3, 5, 9, 2]
+				}, {
+					label: 'Dataset 2',
+					backgroundColor: [
+						
+						'rgba(153, 102, 255, 0.2)',
+					],
+					yAxisID: 'y-axis-2',
+					data: [12, 19, 3, 5, 2, 3, 4]
+				}]
+
+			};
+			
+			var ctx = document.getElementById('myChartRadar').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'radar',
+				data: barChartDataRadar,
+				options: {
+					responsive: true,
+					title: {
+						display: true,
+						text: 'Chart.js Radar Chart - Multi Axis'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: true
+					},
+					scales: {
+						yAxes: [{
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'left',
+							id: 'y-axis-1',
+						}, {
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'right',
+							id: 'y-axis-2',
+							gridLines: {
+								drawOnChartArea: false
+							}
+						}],
+					}
+				}
+			});
+		};
+		
+		var line = document.getElementById("myChartLine").getContext('2d');
+		var myLineChart = new Chart(line, {
+			type: 'line',
+			data: {
+				labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+				datasets: [{
+					label: '# of Votes',
+					data: [12, 19, 3, 5, 2, 3],
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.2)',
+					],
+					borderColor: [
+						'rgba(255,99,132,1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true
+						}
+					}]
+				}
+			}
+		});
 		//sungai -----------------------------------
 		document.getElementById('volume_eceng').innerHTML = (0);
 		document.getElementById('volume_pelastik').innerHTML = (0);
@@ -522,267 +747,5 @@ $total_year_ach = (($total3/$target_year)*100);
 		document.getElementById('pencapaian_lain').innerHTML = (0);
 		
 		//$("#example").dataTable();
-		
-		Highcharts.chart('container', {
-
-			title: {
-				text: 'Avaibility Target '
-			},
-
-			subtitle: {
-				text: ''
-			},
-			chart: {
-				type: 'column'
-			},
-
-			xAxis: {
-				categories: [
-								'Jan',
-								'Feb',
-								'Mar',
-								'Apr',
-								'May',
-								'Jun',
-								'Jul',
-								'Aug',
-								'Sep',
-								'Oct',
-								'Nov',
-								'Dec'
-							],
-			},
-			yAxis: {
-				title: {
-					text: 'Percentage (%)'
-				},
-				labels: {
-					formatter: function () {
-						return this.value;
-					}
-				}
-			},
-			tooltip: {
-				crosshairs: true,
-				shared: true
-			},
-			legend: {
-				layout: 'horizontal',
-				align: 'center',
-				verticalAlign: 'bottom'
-			},
-
-			series: [{
-				name: 'Cabang 1',
-				data: [81934, 52503, 57367, 69918, 97031, 111111, 132113, 154175]
-			},{
-				name: 'Cabang 2',
-				data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-			}]
-
-			});
-			
-			
-		Highcharts.chart('terhutang', {
-
-			title: {
-				text: 'Avaibility Target '
-			},
-
-			subtitle: {
-				text: ''
-			},
-			chart: {
-				type: 'column'
-			},
-
-			xAxis: {
-				categories: [
-								'<?php echo date("m/d",strtotime("-7 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-6 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-5 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-4 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-3 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-2 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-1 days",strtotime(date('Y-m-d'))))?>',
-							],
-			},
-			yAxis: {
-				title: {
-					text: 'Percentage (%)'
-				},
-				labels: {
-					formatter: function () {
-						return this.value;
-					}
-				}
-			},
-			tooltip: {
-				crosshairs: true,
-				shared: true
-			},
-			legend: {
-				layout: 'horizontal',
-				align: 'center',
-				verticalAlign: 'bottom'
-			},
-
-			series: [{
-				name: 'Cabang 1',
-				data: [8193400, 5250300, 5736700, 6991800, 9703100, 11111100, 13211300]
-			},{
-				name: 'Cabang 2',
-				data: [4393400, 5250300, 5717700, 6965800, 9703100, 11993100, 13713300]
-			}]
-
-			});
-		
-		console.log('');
-			
-		Highcharts.chart('piutang', {
-
-			title: {
-				text: 'Avaibility Target '
-			},
-
-			subtitle: {
-				text: ''
-			},
-			chart: {
-				type: 'column'
-			},
-
-			xAxis: {
-				categories: [
-								'<?php echo date("m/d",strtotime("-7 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-6 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-5 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-4 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-3 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-2 days",strtotime(date('Y-m-d'))))?>',
-								'<?php echo date("m/d",strtotime("-1 days",strtotime(date('Y-m-d'))))?>',
-							],
-			},
-			yAxis: {
-				title: {
-					text: 'Percentage (%)'
-				},
-				labels: {
-					formatter: function () {
-						return this.value;
-					}
-				}
-			},
-			tooltip: {
-				crosshairs: true,
-				shared: true
-			},
-			legend: {
-				layout: 'horizontal',
-				align: 'center',
-				verticalAlign: 'bottom'
-			},
-
-			series: [{
-				name: 'Cabang 1',
-				data: [61934, 32503, 77367, 49918, 37031, 211111, 432113]
-			},{
-				name: 'Cabang 2',
-				data: [43934, 22503, 47177, 49658, 97031, 119931, 137133]
-			}]
-
-			});
-			
-			Highcharts.chart('monthly_transaksi', {
-				chart: {
-					plotBackgroundColor: null,
-					plotBorderWidth: null,
-					plotShadow: false,
-					type: 'pie'
-				},
-				title: {
-					text: 'Monthly'
-				},
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions: {
-					pie: {
-						allowPointSelect: true,
-						cursor: 'pointer',
-						dataLabels: {
-							enabled: false,
-							format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-							style: {
-								color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-							}
-						}
-					}
-				},
-				series: [{
-					name: 'Brands',
-					colorByPoint: true,
-					data: [{
-						name: 'Chrome',
-						y: 61.41,
-						sliced: true,
-						selected: true
-					}, {
-						name: 'Internet Explorer',
-						y: 11.84
-					}, {
-						name: 'Firefox',
-						y: 10.85
-					}, {
-						name: 'Edge',
-						y: 4.67
-					}]
-				}]
-			});
-			
-			Highcharts.chart('yearly_transaksi', {
-				chart: {
-					plotBackgroundColor: null,
-					plotBorderWidth: null,
-					plotShadow: false,
-					type: 'pie'
-				},
-				title: {
-					text: 'Yearly'
-				},
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions: {
-					pie: {
-						allowPointSelect: true,
-						cursor: 'pointer',
-						dataLabels: {
-							enabled: false,
-							format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-							style: {
-								color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-							}
-						}
-					}
-				},
-				series: [{
-					name: 'Brands',
-					colorByPoint: true,
-					data: [{
-						name: 'Chrome',
-						y: 61.41
-					}, {
-						name: 'Internet Explorer',
-						y: 11.84
-					}, {
-						name: 'Firefox',
-						y: 10.85
-					}, {
-						name: 'Edge',
-						y: 4.67
-					}]
-				}]
-			});
 	});
 </script>

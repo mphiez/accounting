@@ -43,7 +43,9 @@ class Master extends CI_Controller {
 	}
 	
 	public function get_customer(){
-		$datax = $this->transaksi_model->user();
+		$id = $this->input->post('id');
+		$cabang = $this->input->post('cabang');
+		$datax = $this->transaksi_model->user(false,$id, $cabang);
 		if($datax){
 			$temp = array();
 			foreach($datax as $row){
@@ -163,12 +165,68 @@ class Master extends CI_Controller {
 		exit();
 	}
 	
+	public function delete_customer(){
+		
+		$post = $this->input->post();
+		
+		$result = $this->result();
+		if($data	= $this->master_model->delete_customer($post)){
+			$result['info'] = 'delete_ok';
+			$result['data'] = $data;
+		}else{
+			$result['info'] = 'delete_failed';
+			$result['code'] = '1';
+		}
+		
+		echo json_encode($result);
+		exit();
+	}
+	
 	public function add_account(){
 		
 		$post = $this->input->post();
 		
 		$result = $this->result();
 		$data	= $this->master_model->add($post);
+		if($data['code'] == '0'){
+			$result['info'] = 'add_ok';
+			$result['data'] = $data;
+		}else if($data['code'] == '1'){
+			$result['info'] = 'add_failed';
+			$result['code'] = '1';
+		}else if($data['code'] == '2'){
+			$result['info'] = 'Existing Account';
+			$result['code'] = '2';
+		}
+		
+		echo json_encode($result);
+		exit();
+	}
+	
+	public function update_customer(){
+		
+		$post = $this->input->post();
+		
+		$result = $this->result();
+		$data	= $this->master_model->update_customer($post);
+		if($data){
+			$result['info'] = 'add_ok';
+			$result['data'] = $data;
+		}else if($data['code'] == '2'){
+			$result['info'] = 'error';
+			$result['code'] = '2';
+		}
+		
+		echo json_encode($result);
+		exit();
+	}
+	
+	public function add_customer(){
+		
+		$post = $this->input->post();
+		
+		$result = $this->result();
+		$data	= $this->master_model->add_customer($post);
 		if($data['code'] == '0'){
 			$result['info'] = 'add_ok';
 			$result['data'] = $data;

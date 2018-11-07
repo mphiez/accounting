@@ -20,8 +20,10 @@
 							<tr>
 							  <th>Tanggal</th>
 							  <th>No. Ref.</th>
-							  <th>No. Transaksi</th>
 							  <th>Cabang</th>
+							  <th>No. Transaksi</th>
+							  <th>No. Invoice</th>
+							  
 							  <th>Metode</th>
 							  <th>Lampiran</th>
 							  <th>Pesan</th>
@@ -105,6 +107,7 @@ function load(){
 				{ "data": "no_ref"},
 				{ "data": "cabang"},
 				{ "data": "nomor_transaksi"},
+				{ "data": "nomor_invoice"},
 				{ "data": "metode_pembayaran"},
 				{
 					render: function (data, type, row, meta) {
@@ -123,7 +126,11 @@ function load(){
 				{ "data": "jumlah_item"},
 				{
 					render: function (data, type, row, meta) {
-						return '<button class="btn btn-info btn-sm" onclick="return detail(&#39;'+row.id+'&#39;)"><i class="fa fa-list"></i> Detail</button>';
+						var inv ="";
+						if(row.nomor_invoice != null){
+							inv = '<a href="<?php echo base_url()?>index.php/transaksi/invoice?inv='+row.id_inv+'" class="btn btn-success btn-sm"><i class="fa fa-file"></i> View Invoice</a>';
+						}
+						return '<button class="btn btn-info btn-sm" onclick="return detail(&#39;'+row.id+'&#39;)"><i class="fa fa-list"></i> Detail</button>'+inv;
 					}
 				}
 			],

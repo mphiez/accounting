@@ -230,10 +230,12 @@
 										'<select class="form-control chosen-select1" id="akun_debet_'+num+'">'+
 											'<option value="">Pilih Akun</option>'+
 											<?php 
+											if($account_list > 0){
 											foreach($account_list as $row){
 											?>
 												'<option value="<?php echo $row->account_num?>"><?php echo $row->account_num." - ".$row->account_name?></option>'+
 											<?php
+											}
 											}
 											?>
 										'</select>'+
@@ -243,10 +245,12 @@
 										'<select class="form-control chosen-select1" id="akun_kredit_'+num+'">'+
 											'<option value="">Pilih Akun</option>'+
 											<?php 
+											if($account_list > 0){
 											foreach($account_list as $row){
 											?>
 												'<option value="<?php echo $row->account_num?>"><?php echo $row->account_num." - ".$row->account_name?></option>'+
 											<?php
+											}
 											}
 											?>
 										'</select>'+

@@ -1,5 +1,8 @@
 <?php $this->load->view('header');?>
 	<section class="content-header">
+      <h1>
+       <?=$judul?>
+      </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active"><?=$judul?></li>
@@ -12,19 +15,13 @@
             <div class="box-header" style="padding:0px">
             <!-- /.box-header -->
             <div class="box-body no-padding">
-				<div class="col-md-12">
-					<h2>
-						<?=$judul?>
-					</h2>
-					<hr>
-				</div>
 				<form enctype="multipart/form-data" id="submit">
 					<div class="col-md-12">
 						<div class="col-sm-6 col-md-3">
 							<div class="form-group">
 								<label>Nama Pelanggan</label>
-								<input type="text" id="nama_pelanggan" class="form-control" placeholder="[Auto]">
-								<!--<input type="hidden" id="id_pelanggan">-->
+								<input type="text" id="nama_pelanggan"  onkeyup="return cari_pelanggan()" class="form-control" placeholder="[Auto]">
+								<input type="hidden" id="id_pelanggan">
 							</div>
 						</div>
 						<div class="col-sm-6 col-md-3">
@@ -36,10 +33,37 @@
 						<div class="col-sm-12 col-md-3">
 							<div class="form-group" >
 								<label>No Referensi</label>
-								<input type="text" id="no_referensi" class="form-control">
+								<input type="text" id="no_referensi" class="form-control moneydec">
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-3">
+						<div class="col-sm-6 col-md-3">
+							<div class="form-group">
+								<label>Alamat Penagihan</label>
+								<textarea id="alamat_penagihan" class="form-control" ></textarea>
+							</div>
+						</div>
+						<hr>
+					</div>
+					
+					<div class="col-md-12">
+						<div class="col-sm-6 col-md-3">
+							<div class="form-group" >
+								<label>Tanggal Transaksi</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+									<input type="text" id="tanggal_transaksi" class="form-control" readonly value="<?php echo date('d/m/Y')?>">
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="form-group">
+								<label>Nomor Transaksi</label>
+								<input type="text" id="nomor_transaksi" class="form-control" placeholder="[Auto]">
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
 							<div class="form-group" >
 								<label>Tanggal Invoice</label>
 								<div class="input-group">
@@ -50,24 +74,22 @@
 								</div>
 							</div>
 						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="form-group">
+								<label>Term Of Payment (Hari)</label>
+								<select id="top" class="form-control">
+									<option value="0">NET 1</option>
+									<option value="10">NET 10</option>
+									<option value="15">NET 15</option>
+									<option value="30">NET 30</option>
+									<option value="45">NET 45</option>
+									<option value="60">NET 30</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div class="col-md-12">
 						<div class="col-sm-6 col-md-3">
-							<div class="form-group">
-								<label>Alamat Penagihan</label>
-								<textarea id="alamat_penagihan" class="form-control" ></textarea>
-							</div>
-						</div>
-						<div class="col-sm-6 col-md-3">
-							<div class="form-group" >
-								<label>Tanggal Transaksi</label>
-								<div class="input-group">
-									<div class="input-group-addon">
-										<i class="fa fa-calendar"></i>
-									</div>
-									<input type="text" id="tanggal_transaksi" class="form-control" value="<?php echo date('d/m/Y')?>">
-								</div>
-							</div>
 							<div class="form-group" >
 								<label>Metode Pembayaran</label>
 								<select id="metode_pembayaran" onchange="return tujuan()" class="form-control">
@@ -78,14 +100,10 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-3">
-							<div class="form-group">
-								<label>Nomor Transaksi</label>
-								<input type="text" id="nomor_transaksi" class="form-control" placeholder="[Auto]">
-							</div>
-							<div class="form-group" id="tujuan" style="display:none">
+						<div class="col-sm-6 col-md-3">
+							<div class="form-group" id="tujuan">
 								<label>Tujuan</label>
-								<select id="tujuan_transfer" class="form-control">
+								<select id="tujuan_transfer" class="form-control" disabled>
 									<option value="">Pilih Salah Satu</option>
 									<?php 
 										if($bank_list > 0){
@@ -97,17 +115,10 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-3">
+						<div class="col-sm-6 col-md-3">
 							<div class="form-group">
-								<label>Term Of Payment (Hari)</label>
-								<select id="top" class="form-control">
-									<option value="0">NET 1</option>
-									<option value="10">NET 10</option>
-									<option value="15">NET 15</option>
-									<option value="30">NET 30</option>
-									<option value="45">NET 45</option>
-									<option value="60">NET 30</option>
-								</select>
+								<label>Nomor Faktur Pajak</label>
+								<input type="text" id="nomor_faktur" class="form-control" placeholder="[Auto]">
 							</div>
 						</div>
 					</div>
@@ -153,7 +164,12 @@
 										<input type="text" id="harga_satuan_1" class="form-control" readonly>
 										<input type="hidden" id="harga_satuan_dec_1" class="form-control" readonly>
 									</td>
-									<td><input type="text" id="pajak_1" class="form-control"></td>
+									<td>
+										<select id="pajak_1" class="form-control" onchange="return ppn(1)">
+											<option value="0">Non PPN </option>
+											<option value="10">PPN </option>
+											<option value="15">PPN & Service</option>
+										</select>
 									<td>
 										<input type="text" id="jumlah_1" class="form-control" readonly>
 										<input type="hidden" id="jumlah_dec_1" value="0" class="form-control" readonly>
@@ -186,9 +202,15 @@
 										<input type="text" id="harga_satuan_2" class="form-control" readonly>
 										<input type="hidden" id="harga_satuan_dec_2" class="form-control" readonly>
 									</td>
-									<td><input type="text" id="pajak_2" class="form-control"></td>
 									<td>
-										<input type="text" id="jumlah_2" class="form-control" readonly>
+										<select id="pajak_2" class="form-control" onchange="return ppn(2)">
+											<option value="0">Non PPN </option>
+											<option value="10">PPN </option>
+											<option value="15">PPN & Service</option>
+										</select>
+									</td>
+									<td>
+										<input type="text" id="jumlah_2" onchange="return hitung_all()" class="form-control" readonly>
 										<input type="hidden" id="jumlah_dec_2" value="0" class="form-control" readonly>
 									</td>
 								</tr>
@@ -240,14 +262,19 @@
 								</div>
 							</div>
 						</div>
+						<input type="hidden" id="invoice_status" value="0">
 					</div>
-					
-					<div class="col-md-12 ">
-					<hr>
+					<div class="col-md-12">
+						<hr>
+						
+					</div>
+					<div class="col-md-12" id="btn_save">
+						
 						<button class="btn btn-success pull-right"><i class="fa fa-save"></i> Simpan</button>
-						<!--<button type="button" class="btn btn-danger pull-right"><i class="fa fa-close"></i> Batal</button>-->
-						<br>
-						<br>
+						<span class="btn btn-danger pull-right" onclick="return simpan_invoice()"><i class="fa fa-save"></i> Simpan & Cetak Invoice</span>
+						
+					</div>
+					<div class="col-md-12">
 						<br>
 						<br>
 					</div>
@@ -259,16 +286,45 @@
 </div>
 <?php $this->load->view('footer');?>
 <script>
+	function curency(x=''){
+		if(x == ''){
+			x = 0;
+		}
+		return x.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+	}
+	
+	function decimal(x=''){
+		if(x == ''){
+			x = 0;
+		}
+		return x.toString().replace(/[^0-9.-]+/g,"");
+	}
+	
 	$('.date').datepicker({
 		format: "dd/mm/yyyy",
 		autoclose: true,
 	});
+	
+	function simpan_invoice(){
+		if($('#id_pelanggan').val() == ''){
+			alert('Silahkan pilih customer');
+			return false;
+		}
+		$('#invoice_status').val('1');
+		$('#submit').submit();
+	}
 	$('#submit').submit(function(e){
 		var counter = $('#counter').val();
 		var transaksi = new Array();
 		if($('#metode_pembayaran').val() != "cash" && $('#tujuan_transfer').val() == ""){
 			alert("Silahkan pilih tujuan pembayaran !");
 			return false;
+		}
+		
+		if($('#invoice_status').val() == 1){
+			document.getElementById('btn_save').innerHTML = '<span class="btn btn-success pull-right"><i class="fa fa-save"></i> Simpan</span><span class="btn btn-danger pull-right"><i class="fa fa-spinner"></i> Simpan & Cetak Invoice</span>';
+		}else{
+			document.getElementById('btn_save').innerHTML = '<span class="btn btn-success pull-right"><i class="fa fa-spinner"></i> Simpan</span><span class="btn btn-danger pull-right"><i class="fa fa-save"></i> Simpan & Cetak Invoice</span>';
 		}
 		
 		for(i=1;i<=counter;i++){
@@ -286,13 +342,13 @@
 				transaksi.push(temp);
 			}
 		}
-		//console.log($('#image_file').val());return false;
 		if(transaksi.length > 0){
 			$.ajax({
 				url: '<?php echo base_url()?>index.php/transaksi/save',
 				type: "POST",
 				data: {
 					discount			: $('#discount').val(),
+					id_pelanggan		: $('#id_pelanggan').val(),
 					nama_pelanggan		: $('#nama_pelanggan').val(),
 					email_pelanggan		: $('#email_pelanggan').val(),
 					no_referensi		: $('#no_referensi').val(),
@@ -305,6 +361,7 @@
 					tanggal_invoice		: $('#tanggal_invoice').val(),
 					pesan				: $('#pesan').val(),
 					lampiran			: $('#lampiran').val(),
+					nomor_faktur		: $('#nomor_faktur').val(),
 					transaksi 			: transaksi
 				},
 				success: function(datax) {
@@ -322,19 +379,33 @@
 							async:false,
 							success: function(data){
 							  alert('Transaksi berhasil');
-							  location.replace('<?php echo base_url()?>index.php/transaksi/input');
+							  if($('#invoice_status').val() == 1){
+								  $('#invoice_status').val(0);
+								  location.replace('<?php echo base_url()?>index.php/transaksi/invoice?inv='+datax.guid);
+							  }else{
+								  location.replace('<?php echo base_url()?>index.php/transaksi/input');
+							  }
+							  
 							}
 						});
 					}else if(datax.code == 1){
 						alert('Simpan gagal !');
 					}else{
 						alert('Transaksi berhasil !');
-						location.replace('<?php echo base_url()?>index.php/transaksi/input');
+						if($('#invoice_status').val() == 1){
+							$('#invoice_status').val(0);
+							location.replace('<?php echo base_url()?>index.php/transaksi/invoice?inv='+datax.guid);
+						}else{
+						  location.replace('<?php echo base_url()?>index.php/transaksi/input');
+						}
 					}
+					document.getElementById('btn_save').innerHTML = '<button class="btn btn-success pull-right"><i class="fa fa-save"></i> Simpan</button><span class="btn btn-danger pull-right" onclick="return simpan_invoice()"><i class="fa fa-save"></i> Simpan & Cetak Invoice</span>';
 				}
 			});
 		}else{
+			document.getElementById('btn_save').innerHTML = '<button class="btn btn-success pull-right"><i class="fa fa-save"></i> Simpan</button><span class="btn btn-danger pull-right" onclick="return simpan_invoice()"><i class="fa fa-save"></i> Simpan & Cetak Invoice</span>';
 			alert('Tidak ada transaksi !');
+			$('#invoice_status').val(0);
 		}
 		return false;
 	});
@@ -369,7 +440,13 @@
 									'<input type="text" id="harga_satuan_'+num+'" class="form-control" readonly>'+
 									'<input type="hidden" id="harga_satuan_dec_'+num+'" class="form-control" readonly>'+
 								'</td>'+
-								'<td><input type="text" id="pajak_'+num+'" class="form-control"></td>'+
+								'<td>'+
+									'<select id="pajak_'+num+'" class="form-control" onchange="return ppn('+num+')">'+
+										'<option value="0">Non PPN </option>'+
+										'<option value="10">PPN </option>'+
+										'<option value="15">PPN & Service</option>'+
+									'</select>'+
+								'</td>'+
 								'<td>'+
 									'<input type="text" id="jumlah_'+num+'" class="form-control" readonly>'+
 									'<input type="hidden" id="jumlah_dec_'+num+'" value="0" class="form-control" readonly>'+
@@ -380,11 +457,12 @@
 	
 	function tujuan(){
 		if($('#metode_pembayaran').val() == 'cash'){
-			document.getElementById('tujuan').style.display = "none";
-			$('#tujuan_transfer').val('cash');
+			$('#tujuan_transfer').val('');
+			$('#tujuan_transfer').attr('disabled','disabled');
 		}else{
-			document.getElementById('tujuan').style.display = "";
+			$('#tujuan_transfer').removeAttr('disabled');
 		}
+		ppn(x);
 		hitung_all();
 	}
 	
@@ -397,18 +475,10 @@
 			$('#kuantitas_'+x).val(qty);
 		}
 		var total = qty * harga;
-		if(total > 0){
-			$.ajax({
-				url: '<?php echo base_url()?>index.php/transaksi/number',
-				type: "POST",
-				data: {total:total},
-				success: function(datax) {
-					$('#jumlah_'+x).val(datax);
-					$('#jumlah_dec_'+x).val(total);
-					hitung_all();
-				}
-			});
-		}
+		$('#jumlah_'+x).val(curency(total));
+		$('#jumlah_dec_'+x).val(total);
+		ppn(x);
+		hitung_all();
 	}
 	
 	function add_item(x){
@@ -417,19 +487,11 @@
 		var qty = (jum*1)+1;
 		$('#kuantitas_'+x).val(qty);
 		var total = qty * harga;
-		if(total > 0){
-			$.ajax({
-				url: '<?php echo base_url()?>index.php/transaksi/number',
-				type: "POST",
-				data: {total:total},
-				success: function(datax) {
-					$('#jumlah_'+x).val(datax);
-					$('#jumlah_dec_'+x).val(total);
-					hitung_all();
-				}
-			});
-		}
 		
+		$('#jumlah_'+x).val(curency(total));
+		$('#jumlah_dec_'+x).val(total);	
+		ppn(x);
+		hitung_all();
 	}
 	
 	function hitung_item(x){
@@ -438,18 +500,10 @@
 		var qty = jum;
 		$('#kuantitas_'+x).val(qty);
 		var total = qty * harga;
-		if(total > 0){
-			$.ajax({
-				url: '<?php echo base_url()?>index.php/transaksi/number',
-				type: "POST",
-				data: {total:total},
-				success: function(datax) {
-					$('#jumlah_'+x).val(datax);
-					$('#jumlah_dec_'+x).val(total);
-					hitung_all();
-				}
-			});
-		}
+		$('#jumlah_'+x).val(curency(total));
+		$('#jumlah_dec_'+x).val(total);
+		ppn(x);
+		hitung_all();
 		
 	}
 	
@@ -463,6 +517,7 @@
 		$('#satuan_'+x).val('');
 		$('#harga_satuan_'+x).val('');
 		$('#harga_satuan_dec_'+x).val('');
+		ppn(x);
 		hitung_all();
 		hitung_all();
 	}
@@ -490,22 +545,28 @@
 						source: list_name,
 						select: function( event , ui ) {
 							if(ui.item.label == 'Tidak ditemukan, klik untuk menambah user'){
+								$('#id_pelanggan').val('');
+								$('#alamat_penagihan').val('');
+								$('#email_pelanggan').val('');
 								$('#modal-user').modal();
 							}else{
-								/* var str = (ui.item.label).split(' -');
+								var str = (ui.item.label).split(' -');
 								var index = str[0];
 								var user_id = datax.user_list[index]['id_customer'];
 								var user_name = datax.user_list[index]['nama_customer'];
 								var alamat = datax.user_list[index]['alamat'];
 								var no_hp = datax.user_list[index]['nomor_telfon'];
-								$('#user_id').val(user_id);
-								$('#user_name').val(str[1]);
-								$('#no_hp').val(no_hp);
-								$('#alamat').val(alamat); */
+								var email = datax.user_list[index]['email'];
+								$('#id_pelanggan').val(user_id);
+								$('#alamat_penagihan').val(alamat);
+								$('#email_pelanggan').val(email);
 							}
 						},
 						response: function(event, ui) {
 							if (!(ui.content.length)) {
+									$('#id_pelanggan').val('');
+									$('#alamat_penagihan').val('');
+									$('#email_pelanggan').val('');
 									var noResult = { value:"",label:"Tidak ditemukan, klik untuk menambah user" };
 									ui.content.push(noResult);
 							}
@@ -542,6 +603,7 @@
 								$('#satuan_'+x).val('');
 								$('#harga_satuan_'+x).val('');
 								$('#harga_satuan_dec_'+x).val('');
+								ppn(x);
 								hitung_all();
 							}else{
 								var str = (ui.item.label).split(' - ');
@@ -560,6 +622,7 @@
 								$('#satuan_'+x).val(satuan);
 								$('#harga_satuan_'+x).val(harga_dec);
 								$('#harga_satuan_dec_'+x).val(harga);
+								ppn(x);
 								hitung_all();
 							}
 						},
@@ -580,53 +643,37 @@
 						$('#jumlah_dec_'+x).val(0);
 						$('#satuan_'+x).val('');
 						$('#harga_satuan_'+x).val('');
+						ppn(x);
 						hitung_all();
 					}
 			}
 		});
 	}
 	
+	function ppn(x){
+		var jum = $('#harga_satuan_dec_'+x).val();
+		var qty = $('#kuantitas_'+x).val();
+		var ppn = $('#pajak_'+x).val();
+		var tot_ppn = Math.round((ppn/100) * (jum*qty));
+		var jumlah_dec = decimal(((jum*qty) + tot_ppn));
+		var jumlah_cur = curency(((jum*qty) + tot_ppn));
+		$('#jumlah_'+x).val(jumlah_cur);
+		$('#jumlah_dec_'+x).val(jumlah_dec);
+		hitung_all();
+	}
+	
 	
 	function hitung_all(){
-		console.log($('#discount').val());
 		var counter = $('#counter').val();
 		var subtotal = 0;
 		
 		for(i=1;i<=counter;i++){
-			console.log($('#jumlah_dec_'+i).val());
 			subtotal = (subtotal*1) + ($('#jumlah_dec_'+i).val()) *1;
 		}
+		$('#subtotal').val(curency(subtotal));
 		
-		
-		$.ajax({
-			url: '<?php echo base_url()?>index.php/transaksi/number',
-			type: "POST",
-			data: {total:subtotal},
-			success: function(datax) {
-				$('#subtotal').val(datax);
-			}
-		});
-		if(subtotal > 0){
-			$.ajax({
-				url: '<?php echo base_url()?>index.php/transaksi/decimal',
-				type: "POST",
-				data: {total : $('#discount').val()},
-				success: function(datax) {
-					var total = subtotal-datax;
-					$.ajax({
-						url: '<?php echo base_url()?>index.php/transaksi/number',
-						type: "POST",
-						data: {total:total},
-						success: function(datax) {
-							$('#total').val(datax);
-						}
-					});
-				}
-			});
-		}else{
-			$('#subtotal').val(0);
-			$('#total').val(0);
-		}
+		var total = subtotal-decimal($('#discount').val());
+		$('#total').val(curency(total))
 		
 	}
 </script>

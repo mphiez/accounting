@@ -33,7 +33,7 @@ class Register extends CI_Controller {
 							);
 				}else{
 				
-					/* $fromEmail = "budianatekom@gmail.com"; //ganti dg alamat email kamu di sini
+					$fromEmail = "budianatekom@gmail.com"; //ganti dg alamat email kamu di sini
 					//$isiEmail = "Isi email tulis disini"; //ini isi emailnya
 					$nm_cust="";
 					$no_inv="";
@@ -81,7 +81,7 @@ class Register extends CI_Controller {
 							'data' => "Eror: ".$mail->ErrorInfo,
 							'code' => 3
 						);
-					} else { */
+					} else {
 						
 						$id = $this->register_model->save($data, $gen);
 						if($id){
@@ -95,7 +95,7 @@ class Register extends CI_Controller {
 								'code' => 1
 							);
 						}
-					/* } */
+					}
 				}
 		}else{
 			$return = array(

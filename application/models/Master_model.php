@@ -98,14 +98,32 @@
 			}
 		}
 		
-		public function update($data = array()){		
+		public function add_customer($data = array()){		
 			$this->db->trans_begin();
 			$perusahaan = $this->session->userdata("perusahaan");
-			$this->db->where('account_num', $data['account_num']);
-			$this->db->where('perusahaan', $perusahaan);
-			$this->db->update('dk_account',$data);
-			
-			//echo $this->db->last_query();exit;
+			$data['perusahaan'] = $perusahaan;
+			$data['cabang'] = $this->session->userdata('pn_wilayah');
+			$data['user'] = $this->session->userdata('pn_id');
+			$data['create_date'] = date('Y-m-d H:i:s');
+			$data['id_customer'] = $id_paket = counter('c_customer',$this->session->userdata('pn_wilayah'));
+			$id = $this->db->insert('dk_customer', $data);
+			$id_ref = $this->db->insert_id();
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback();
+				return array('code'=>1,'data'=>null);
+			}else{
+				$this->db->trans_commit();
+				return array('code'=>0,'data'=>$id_paket);
+				
+			}
+		}
+		
+		public function update($data = array()){		
+			$this->db->trans_begin();
+			$id = $this->db->where('id_customer', $data['id_customer']);
+			$id = $this->db->update('dk_account', $data);
+			$id_ref = $this->db->insert_id();
 
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -118,10 +136,31 @@
 			}
 		}
 		
+		public function update_customer($data = array()){
+			$this->db->trans_begin();
+			$perusahaan = $this->session->userdata("perusahaan");
+			$this->db->where('id_customer', $data['id_customer']);
+			$this->db->where('perusahaan', $perusahaan);
+			$this->db->update('dk_customer',$data);
+			
+			//echo $this->db->last_query();exit;
+
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback();
+				return false;
+			}else{
+				$this->db->trans_commit();
+				return $data['id_customer'];
+				
+			}
+		}
+		
 		public function delete_row($data = array()){		
 			$this->db->trans_begin();
-
-			$this->db->delete('dk_account',$data);
+			$data2 = array('status' => 1);
+			$this->db->where('account_num',$data['account_num']);
+			$this->db->update('dk_account',$data2);
 
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -130,6 +169,23 @@
 			}else{
 				$this->db->trans_commit();
 				return $data['account_num'];
+				
+			}
+		}
+		
+		public function delete_customer($data = array()){		
+			$this->db->trans_begin();
+			$data2 = array('status' => 1);
+			$this->db->where('id',$data['id_customer']);
+			$this->db->update('dk_customer',$data2);
+
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback();
+				return false;
+			}else{
+				$this->db->trans_commit();
+				return $data['id_customer'];
 				
 			}
 		}

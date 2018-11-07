@@ -452,6 +452,18 @@
 				$ret = $query->result();
 				return $ret[0]->r;
 			}else{
+				return false;
+			}
+		}
+		
+		function check_akun(){
+			$perusahaan = $this->session->userdata('perusahaan');
+			$query	= "select status_akun, verify_date from dk_company where id='$perusahaan'";
+			$query 	= $this->db->query($query);
+			if($query->num_rows() > 0){
+				$ret = $query->result();
+				return $ret[0];
+			}else{
 				return 0;
 			}
 		}

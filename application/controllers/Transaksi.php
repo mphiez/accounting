@@ -22,6 +22,26 @@ class Transaksi extends CI_Controller {
 		$this->load->view('transaksi/v_input_transaksi',$data);
 	}
 	
+	function invoice(){
+		$id = $this->input->get('inv');
+		$data['data_invoice']				= $this->transaksi_model->dataInvoice($id);
+		$html							= $this->load->view('transaksi/v_invoice',$data,true);
+		$pdfFilePath					= "laba rugi.pdf";
+		$this->load->library('m_pdf');
+		$pdf			= $this->m_pdf->load();
+		//$mpdf = new mPDF('c', 'A4-L'); 
+		$pdf->AddPage('P', '', '', '',
+				10, // margin_left
+				20, // margin Left  -
+				20, // margin right -
+				0, // margin top - 
+				10, // margin bottom
+				10); // margin footer
+		$pdf->WriteHTML($html);
+		$pdf->Output($pdfFilePath, "I");
+		
+	}
+	
 	public function search_user(){
 		$name = $this->input->post('pn_name');
 		$datax = $this->transaksi_model->user($name);
@@ -90,13 +110,15 @@ class Transaksi extends CI_Controller {
 		if($datax){
 			$return = array(
 				'data' => $datax,
-				'code' => 0
+				'code' => 0,
+				'guid' => md5($datax)
 			);
 			
 		}else{
 			$return = array(
 				'data' => $datax,
-				'code' => 1
+				'code' => 1,
+				'guid' => 0
 			);
 		}
 		echo json_encode($return);

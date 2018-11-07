@@ -182,8 +182,16 @@
 		$CI->load->model('menu_model');
 		if(!empty($active) and !empty($sub_ac)){
 			$read = $CI->menu_model->m_get_menu_akses($pn_jabatan,$active,$sub_ac);
-		}else{
+			/* $val = $read;
+			if($val == 1){
+				echo "masuk";
+				$read = 'N';
+			}
+			echo $read; */
+		}else if($active == 'dashboard' || $active == 'main'){
 			$read = 'Y';
+		}else{
+			$read = 'N';
 		}
 		
 		
@@ -192,8 +200,39 @@
 		}else{
 			echo "<script>
 				document.getElementById('body-inside').innerHTML = '<label style=&#39;text-align:center;&#39;><h3><b>Forbidden</b>, Cannot Access Page</h3></label>';
+				console.log('$read');
 			</script>";
 		}
+	}
+	
+	function check_akun(){
+		$CI =& get_instance();
+		$CI->load->model('menu_model');
+		$read = $CI->menu_model->check_akun();
+		if($read){
+			return array(
+					'status_akun' => $read->status_akun,
+					'verify_date' => $read->verify_date,
+				);
+		}
+		return false;
+	}
+	
+	function check_valid(){
+		$CI =& get_instance();
+		$CI->load->model('menu_model');
+		$read = $CI->menu_model->check_akun();
+		if($read){
+			if(((date("Y-m-d",strtotime("+1 month", strtotime($read->verify_date)))) > date("Y-m-d")) && $read->status_akun != 1){
+				echo "<script>console.log('-ok-');</script>";
+			}else{
+				echo "<script>
+					document.getElementById('btn_all').style.display = 'none';
+					console.log('$read');
+				</script>";
+			}
+		}
+		return false;
 	}
 	
 	function Terbilang($x)
@@ -357,6 +396,9 @@
 			$kdadd		= '0';
 		}
 		$thnbln			= date("ymd");
+		if($x == 'c_inv'){
+			return $id = "INV".$thnbln.$per.$cab.$kd_barang;
+		}
 		return $id = "P".$thnbln.$per.$cab.$kd_barang;
 	}
 	

@@ -33,11 +33,9 @@
   <link rel="stylesheet" href="<?=base_url()?>plugins/chosen/chosen.css">
   <link rel="stylesheet" href="<?=base_url()?>plugins/chosen/chosen.min.css">
   <link rel="stylesheet" href="<?=base_url()?>plugins/jQueryUI/jquery-ui.css">
-  <link rel="stylesheet" href="<?=base_url()?>plugins/chart/highcharts.js">
   <link rel="stylesheet" href="<?=base_url()?>plugins/chart/exporting.js">
   
-  <script src="<?=base_url()?>plugins/highchart/highcharts.src.js"></script>
-  <script src="<?=base_url()?>plugins/highchart/highcharts-more.src.js"></script>
+  <script src="<?php echo base_url()?>plugins/libs/Chart.js/2.7.3/Chart.min.js"></script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -111,8 +109,37 @@
   
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+	<?php $val = check_akun();
+		if($val && $val['status_akun'] == 1){
+			$ts1 = (date("Y-m-d",strtotime($val['verify_date'])));
+			$ts2 = (date("Y-m-d"));
+			$dStart = new DateTime($ts1);
+			$dEnd  = new DateTime($ts2);
+			$dDiff = $dStart->diff($dEnd);
+			if($val['status_akun'] == '1'){
+			?>
+			<section class="content-header" style="padding:5px;background-color:yellow">
+				<div class="row">
+					<div class="col-xs-12">
+						<?php if((date("Y-m-d",strtotime("+1 month", strtotime($val['verify_date'])))) > date("Y-m-d")){?>
+						<p class="btn btn-danger btn-sm"><i class="fa fa-hourglass-3"></i>  Trial Mode : <span> <?php echo (30-$dDiff->days);?> days left</span></p>
+						<?php }else{
+						?>
+						<p class="btn btn-danger btn-sm"><i class="fa fa-hourglass-3"></i>  Your trial mode is expired, please upgrade your account</span></p>
+						<?php
+						}?>
+						<a href="<?php echo base_url()?>index.php/upgrade?uc=dsfdsgDFD454vvcvd54" class="btn btn-success btn-sm"><i class="fa fa-rocket"></i><span> Upgrade Your Account Here</span></a>
+						<a href="<?php echo base_url()?>index.php/upgrade?uc=dsfdsgDFD454vvcvd54" class="btn btn-info btn-sm pull-right"><span style="border:1px solid lightgray;border-radius:6px;padding:0px 4px;background-color:white;color: #8f8787;"><b>?</b></span><span> More info</span></a>
+					</div>
+				</div>
+			</section>
+			<?php
+			}
+		}
+	?>
+	
 <div class="wrapper">
-
+	
   <header class="main-header">
     <!-- Logo -->
     <a href="<?php echo base_url()?>" class="logo">

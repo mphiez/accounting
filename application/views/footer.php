@@ -209,6 +209,7 @@
 	$sub_ac		= $this->uri->segment(2);
 	$pn_jabatan = $this->session->userdata('pn_jabatan');
 	echo (cek_read($pn_jabatan,$active,$sub_ac));
+	echo (check_valid());
 ?>
 <!-- jQuery 2.2.3 -->
 <script src="<?=base_url();?>plugins/jQuery/jquery-2.2.3.min.js"></script>
@@ -239,6 +240,7 @@
 <script src="<?=base_url();?>dist/js/demo.js"></script>
 <script>
 	$('.money').mask('000,000,000,000,000', {reverse: true});
+	$('.moneydec').mask('000000000000000', {reverse: true});
 </script>
 </body>
 </html>

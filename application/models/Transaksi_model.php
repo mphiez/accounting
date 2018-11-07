@@ -23,15 +23,28 @@
 			}
 		}
 		
-		public function user($search){
+		public function user($search=null, $id=null, $cabang=null){
 			$where = "";
+			$limit = "";
 			if(!empty($search)){
 				$where = " and (upper(nama_customer) like '%".strtoupper($search)."%' or id_customer like '%".$search."%')";
 				$limit = " limit 0,10";
 			}
+			if(isset($id)){
+				$where = " and id='$id'";
+			}
+			$cabang_2= "";
+			if(isset($cabang) && $cabang != 'all'){
+				$cabang_2= " and cabang='$cabang'";
+			}else if(isset($cabang) && $cabang == 'all'){
+				$cabang_2= "";
+			}else{
+				$cabang = $this->session->userdata('pn_wilayah');
+				$cabang_2= " and cabang='$cabang'";
+			}
 			$perusahaan = $this->session->userdata('perusahaan');
 			$cabang = $this->session->userdata('pn_wilayah');
-			$query 	= "select * from dk_customer where perusahaan='$perusahaan' and cabang='$cabang' $where order by nama_customer $limit";
+			$query 	= "select * from dk_customer where perusahaan='$perusahaan'$cabang_2 $where order by nama_customer $limit";
 			$q 		= $this->db->query($query);
 			if($q->num_rows() > 0){
 				return $q->result();
@@ -76,7 +89,7 @@
 			$perusahaan = $this->session->userdata('perusahaan');
 			$cabang = $this->session->userdata('pn_wilayah');
 			$admin = cek_admin();
-			$query 	= "select * from dk_transaksi where perusahaan='$perusahaan' $admin order by tanggal_transaksi desc";
+			$query 	= "select *, md5(id) as id_inv from dk_transaksi where perusahaan='$perusahaan' $admin order by tanggal_transaksi desc";
 			$q 		= $this->db->query($query);
 			if($q->num_rows() > 0){
 				return $q->result();
@@ -100,7 +113,9 @@
 			if(!empty($id)){
 				$where = " and account_num = '$id'";
 			}
-			$query 	= "select * from dk_account where LENGTH(account_name) > 6 and (SUBSTR(account_name,1,4) = 'Bank' or SUBSTR(account_name,1,4) = 'bank') and SUBSTR(account_num,1,3) = '1-1' $where";
+			$perusahaan = $this->session->userdata('perusahaan');
+			$cabang = $this->session->userdata('pn_wilayah');
+			$query 	= "select * from dk_account where LENGTH(account_name) > 6 and perusahaan='$perusahaan' and (SUBSTR(account_name,1,4) = 'Bank' or SUBSTR(account_name,1,4) = 'bank') and SUBSTR(account_num,1,3) = '1-1' $where";
 			$q 		= $this->db->query($query);
 			if($q->num_rows() > 0){
 				return $q->result();
@@ -111,9 +126,15 @@
 		
 		public function save($id = null){
 			$this->db->trans_begin();
+			if($this->input->post('tanggal_invoice') == ''){
+				$tgl_inv = date("Y-m-d");
+			}else{
+				$tgl_inv = date("Y-m-d", strtotime($this->input->post('tanggal_invoice')));
+			}
 			$data1 = array(
 						'discount'			=> str_replace(',','',$this->input->post('discount')),
 						'nama_pelanggan'	=> $this->input->post('nama_pelanggan'),
+						'id_pelanggan'		=> $this->input->post('id_pelanggan'),
 						'email'				=> $this->input->post('email_pelanggan'),
 						'no_ref'			=> $this->input->post('no_referensi'),
 						'alamat_tagih'		=> $this->input->post('alamat_penagihan'),
@@ -123,14 +144,18 @@
 						'cabang'			=> $this->session->userdata('pn_wilayah'),
 						'perusahaan'		=> $this->session->userdata('perusahaan'),
 						'akun_tujuan'		=> $this->input->post('tujuan'),
+						'nomor_faktur'		=> $this->input->post('nomor_faktur'),
 						'pesan'				=> $this->input->post('pesan'),
 						'top'				=> $this->input->post('top'),
-						'tanggal_invoice'	=> $this->input->post('tanggal_invoice'),
+						'tanggal_invoice'	=> $tgl_inv,
+						'nomor_invoice'		=> counter('c_inv'),
 						'tanggal_transaksi'	=> date('Y-m-d H:i:s'),
 						'status'			=> 0,
 					);
 			$this->db->insert('dk_transaksi',$data1);
 			$id_ref = $this->db->insert_id();
+			
+			add_counter('c_inv');
 			
 			$transaksi = $this->input->post('transaksi');
 			$sub = 0;
@@ -145,7 +170,7 @@
 					'kuantitas'			=> $row['kuantitas'],
 					'satuan'			=> $row['satuan'],
 					'harga_satuan'		=> $row['harga_satuan_dec'],
-					'pajak'				=> $row['pajak'],
+					'pajak'				=> round(($row['pajak']/100)*$row['kuantitas']*$row['harga_satuan_dec']),
 					'jumlah'			=> $row['jumlah_dec'],
 					'id_ref'			=> $id_ref,
 					'user'				=> $this->session->userdata('pn_id'),
@@ -264,6 +289,16 @@
 				$this->db->trans_commit();
 				
 				return true;
+			}
+		}
+		
+		public function dataInvoice($id){
+			$query 	= "select a.*, b.*, c.*, d.logo, d.nama_perusahaan, d.nomor_telfon telfon_perusahaan, d.email as email_perusahaan, d.no_fax fax_perusahaan, d.alamat alamat_perusahaan, d.fullname, d.no_bank1, d.no_bank2, d.atasnama_bank1, d.atasnama_bank2, d.bank1, d.bank2 from dk_transaksi as a right join dk_transaksi_detail as b on a.id = b.id_ref left join dk_customer c on a.id_pelanggan = id_customer left join dk_company d on a.perusahaan = d.id where md5(a.id) = '$id'";
+			$q 		= $this->db->query($query);
+			if($q->num_rows() > 0){
+				return $q->result();
+			}else{
+				return 0;
 			}
 		}
 	}
