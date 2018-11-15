@@ -1,0 +1,276 @@
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+   folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/_all-skins.min.css">
+
+<style>
+	li .active {
+		background: #e7e7e7;
+	}
+	.content{
+		padding-bottom: 100px;
+	}
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+	
+	.example2_processing{
+		border-color:white !important;
+	}
+	
+	.container{
+		width : 100%;
+	}
+	
+	.treeview{
+		padding : 0px 10px 0px 10px !important;
+	}
+	
+	.sidebar-menu li > a:hover {
+		//background-color:lightgray;
+		color:black;
+	}
+	
+	td:nth-child(2) {  
+	  background-color:#d3fecb;//ncx
+	}
+	td:nth-child(3) {  
+	  background-color:#f8cdcc;//tibs
+	}
+	th:nth-child(2) {  
+	  background-color:#a4f894;//ncx
+	}
+	th:nth-child(3) {  
+	  background-color:#fe9795;//tibs
+	}
+	
+	/* td:nth-child(3) {  
+	  background-color:#d3fecb;//ncx
+	}
+	td:nth-child(4) {  
+	  background-color:#b3d3fe;//trems
+	}
+	th:nth-child(3) {  
+	  background-color:#a4f894;//ncx
+	}
+	th:nth-child(4) {  
+	  background-color:#87b7f8;//trems
+	} */
+</style>
+<div class="row">
+	
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="col-md-8"><b style="font-size:25px"> Rekon Order Detail</b> NCX (Billcom) vs TIBS</label></div>
+			<div class="col-md-4 pull-right" style="padding-top: 30px;color:white"><div class="pull-right"><label>Last Update : </label><label id="last_update"></label></div></div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding: 15px;">
+		  <div class="col-md-3">
+				<aside class="main-sidebar" style="padding: 0px 15px 15px 15px; !important;min-width:315px;border-radius:5px">
+			<!-- sidebar: style can be found in sidebar.less -->
+				<section class="sidebar">
+				  <!-- /.search form -->
+				  <!-- sidebar menu: : style can be found in sidebar.less -->
+				  <ul class="sidebar-menu" style="padding: 0px; border:solid 1px #d9534f;min-height:550px;background: white;">
+					<li class="header" style="background-color:#d9534f;"><h3 style="padding-top : 0px;margin:0px;font-size:15px;"><b style="color:white">Hirarki Rekon</b></li>
+					<?php
+					$aa = explode('/',strtok($_SERVER["REQUEST_URI"],'?'));
+					$link = str_replace('detail','',str_replace('-detail','',$aa[3]));
+					foreach($this->menu_rekon as $row){
+						$active = "";
+						foreach($row['index'] as $temp){
+							if($temp == $link){
+								$active = "active";
+							}
+						}
+					?>
+						<li class="treeview <?php echo $active;?>">
+						  <a href="#">
+							<i class="fa <?php echo $row['ICON']; ?>"></i> <span><?php echo $row['NAME'];?></span>
+							<span class="pull-right-container">
+							  <i class="fa fa-angle-left pull-right"></i>
+							</span>
+						  </a>
+						  <?php if(!empty($row['detail'])){?>
+							  <ul class="treeview-menu">
+								<?php foreach($row['detail'] as $val){?>
+								<li style="white-space: normal;" <?php if($val['LINK'] == $link){echo $active = "class='active'";$nm_mnu = $val['NAME'];}?>>
+								  <a <?php if($val['LINK'] == $link){echo $active = "class='active'";}?> href="<?php if($val['LINK'] != '#' && $val['LINK'] != ''){$this->basePath()?>/ncxtools/tools/<?php echo $val['LINK'];}else{echo "#";}?>"><i class="fa fa-circle-o"></i> <?php echo $val['NAME']?>
+								  </a>
+								</li>
+								<?php }?>
+							  </ul>
+						  <?php }?>
+						</li>
+					<?php
+					}
+					?>
+				  </ul>
+				</section>
+				<!-- /.sidebar -->
+			  </aside>
+			</div>
+		  <div class="col-md-9" style="min-height:550px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+				<label><h4><?php echo strtoupper($nm_mnu); if($_GET['stat'] != 'all'){echo " (".strtoupper($_GET['stat']).")";}?></h4></label><br><br>
+				<table class="table table-hover table-strips" id="example2" style="margin-bottom:0px !important">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>Order Num</th>
+							<th>Customer Order Num</th>
+							<th>Status</th>
+							<th>Update Date</th>
+						</tr>
+					</thead>
+					<tbody id="body-content">
+
+					</tbody>
+				</table>
+		  </div>
+		  <div class="col-md-12" style="padding:15px 0px 0px 30px">
+			  <div id="kirim_toggle" style="display:none" class="pull-right">
+				<button id="send" class="btn btn-danger" type="button">Kirim</button>
+				<a class="btn btn-warning pull-left" href="<?php echo $this->basePath()?>/ncxtools/tools/bulktermin">Batal</a>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+	</form>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/demo.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.responsive.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.buttons.min.js"></script>
+<script>
+	$('#example2').dataTable( {
+		"serverSide": true,
+		"processing": true,
+        "language": {
+            processing: '<span class="pull-center"><tr><td colspan="7" style="text-align : center;padding : 10px 0px;"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="20px" height="20px"> Loading . . .</td></tr></span> '},
+		"ajax": {
+			"url": "<?php echo $this->basePath(); ?>/ncxtools/data/billcomncxtibsDetail",
+			"type": 'POST',
+			"data" : {
+				STATUS : '<?php echo $_GET['stat']?>'
+			},
+		},
+		"columns": [
+			{ "data": "RNUM" },
+			{ "data": "ORDER_NUM" },
+			{ "data": "CUST_ORDER_NUM" },
+			{ "data": "STATUS" },
+			{ "data": "UPDATED_DATE" },
+		],
+	} );
+	
+	setTimeout(function(){
+		$('#example2_filter').append('<button id="kirim_toggle" class="btn btn-success pull-right" onclick="return download()">Download Excel</button>');
+	}, 1000);
+	
+	function download(){
+		$.ajax({
+			url: "<?php echo $this->basePath(); ?>/ncxtools/data/download-rekon",
+			type: "POST",
+			beforeSend: function() {
+				document.getElementById('kirim_toggle').innerHTML = '<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Download Excel';
+			},
+			data: {
+				IN_TABLE : 'ncx_billcom-tibs',
+				IN_DATE : '<?php echo date('dmY');?>',
+				IN_STATUS : '<?php echo $_GET['stat']?>',
+				name : 'NCX (Billcom) - TIBS'
+			},
+			success: function(rs) {
+				if(rs.code == '0'){
+					check_download(rs.data);
+				}
+			}
+		});
+	}
+	
+	$.ajax({
+			url:"<?php echo $this->basePath()?>/ncxtools/data/getcacustreflast",  
+			type:"POST",
+			data : {tabel:'f_billcom_order_ncx_tibs'},
+			success:function(datax){
+				if(datax.code == 0){
+					$('#last_update').text(datax.data[0]['LAST_UPDATE']);				
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status);
+				alert(thrownError);
+			  }
+		});
+	
+	function check_download(data){
+		$.ajax({
+			url: "<?php echo $this->basePath(); ?>/ncxtools/data/check-download",
+			type: "POST",
+			data: {
+				id : data.id,
+			},
+			success: function(rs) {
+				if(rs.code == '0'){
+					document.getElementById('kirim_toggle').innerHTML = 'Download Excel';
+					location.replace('<?php echo $this->basePath()?>/csv/'+data.rekon_table+'('+data.rekon_status+').csv');
+				}else{
+					setTimeout(function() {
+						check_download(data)
+					}, 10000);
+				}
+			}
+		});
+	}
+</script>

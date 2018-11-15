@@ -1,0 +1,180 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<style>
+	.content{
+		padding-bottom: 100px;
+	}
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+</style>
+<div class="row">
+	
+	<div class="col-md-12">
+		<div class="col-md-8"><h3>Upload file Update Master</h3></div>
+		<div class="col-md-4 pull-right" style="padding-top: 30px;"><a href="<?php echo $this->basePath()?>/download/Update_master_CABASA.xlsx" class="pull-right" target="blank">[ Excel sample ]</a></div>
+	</div>
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="form-group">
+				<div class="col-md-2">
+					<label>Upload File</label>
+				</div>
+				<div class="col-md-6" id="nm_file">
+					<div id="hide_file">
+					<form mehtod="post" id="export_excel">  
+						<input type="file" value=""  placeholder="Silahkan masukan keyword pencarian.." name="excel_file" id="excel_file" class="form-control">
+					</div>
+				</div>
+			</div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding: 15px;">
+		  <div class="col-md-12" style="min-height:350px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+				<table class="table table-hover table-strips" id="example">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>ID</th>
+							<th>Name</th>
+							<th>NIPNAS</th>
+							<th>ACNAS</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody id="body-content">
+
+					</tbody>
+				</table>
+		  </div>
+		  <div class="col-md-12" style="padding:15px 0px 0px 30px">
+			  <div id="kirim_toggle" style="display:none" class="pull-right">
+				<button id="send" class="btn btn-danger" type="button">Simpan</button>
+				<a class="btn btn-warning pull-left" href="<?php echo $this->basePath()?>/ncxtools/tools/bulkupdate">Batal</a>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+	</form>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	$(document).ready(function(){ 
+		  $('#excel_file').change(function(){
+				$('#hide_file').slideUp();
+				$('#kirim_toggle').slideDown();
+			   $('#export_excel').submit();  
+		  });  
+		  $('#export_excel').on('submit', function(event){
+			  document.getElementById('body-content').innerHTML = '<tr><td colspan="6"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td></tr>';
+			   event.preventDefault();  
+			   $.ajax({
+					url:"<?php echo $this->basePath()?>/ncxtools/data/uploadupdate",  
+					method:"POST",  
+					data:new FormData(this),  
+					contentType:false,  
+					processData:false,  
+					success:function(data){
+						document.getElementById('body-content').innerHTML = "";
+						$('#nm_file').append('<label> : '+data.data.nama_file+'</label>');
+						var tot = 0;
+						$.each(data.data.data, function(i, item){
+							tot++;
+							var x = i+1;
+							$('#body-content').append('<tr>'+
+								'<td>'+tot+'</td>'+
+								'<td>'+item.loc+'</td>'+
+								'<td>'+item.name+'</td>'+
+								'<td>'+item.nipnas+'</td>'+
+								'<td>'+item.acnas+'</td>'+
+								'<td>'+item.status+'</td>'+
+							''); 
+						});
+						$("#example").dataTable({"order": [[ 5, "asc" ],[ 0, "asc" ]]});
+					}
+			   });
+		  });
+		  
+		  $('#send').click(function(event){
+			   var file_name = document.getElementById("excel_file").files[0].name;
+				var file_data = $('#excel_file').prop('files')[0];
+				var form_data = new FormData();
+				form_data.append('excel_file', file_data);
+			   $.ajax({
+					url:"<?php echo $this->basePath()?>/ncxtools/data/sendupdate",  
+					method:"POST",  
+					beforeSend: function() {
+						document.getElementById('kirim_toggle').innerHTML = '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Simpan</button><button type="button" class="btn btn-default  pull-left">Batal</button>';
+					},
+					data:form_data,
+					contentType:false,  
+					processData:false,  
+					success:function(datax){
+						if(datax.code == 0){
+							var sukses = ((datax.data.total) * 1)-((datax.data.gagal)*1);
+							$('#modal-success-save').modal();
+							document.getElementById('success-info').innerHTML = 'Perubahan Data Berhasil ('+datax.data+')';
+						}else if(datax.code == 9){
+							$('#modal-success-save').modal();
+							var messageInfo = 'Gagal Simpan Perubahan, silahkan ulangi kembali !';
+							if(datax.code == 10){
+								messageInfo = 'Gagal Simpan Perubahan, silahkan isi nomor tujuan !';
+							}else if(datax.code == 14){
+								messageInfo = 'Gagal Simpan Perubahan, silahkan isi pesan sms !';
+							}
+							document.getElementById('success-info').innerHTML = messageInfo;
+						}else{
+							$('#modal-success-save').modal();
+							var dat = datax.substr(0, 74);
+							document.getElementById('success-info').innerHTML = dat;
+						}
+						document.getElementById('kirim_toggle').innerHTML = '<button type="button" class="btn btn-danger" id="send">Simpan</button><a href="<?php echo $this->basePath()?>/ncxtools/tools/bulkupdate" class="btn btn-default pull-left">Kembali</a>';
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status);
+						alert(thrownError);
+					  }
+			   });
+		  });  
+	});
+</script>

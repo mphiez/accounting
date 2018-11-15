@@ -219,7 +219,7 @@
 						  <!-- small box -->
 						  <div class="small-box bg-aqua">
 							<div class="inner">
-							  <h3>150</h3>
+							  <h3>2.150</h3>
 
 							  <p>New Orders</p>
 							</div>
@@ -234,7 +234,7 @@
 						  <!-- small box -->
 						  <div class="small-box bg-green">
 							<div class="inner">
-							  <h3>53<sup style="font-size: 20px">%</sup></h3>
+							  <h3>83<sup style="font-size: 20px">%</sup></h3>
 
 							  <p>Bounce Rate</p>
 							</div>
@@ -249,9 +249,9 @@
 						  <!-- small box -->
 						  <div class="small-box bg-yellow">
 							<div class="inner">
-							  <h3>44</h3>
+							  <h3>3.544</h3>
 
-							  <p>User Registrations</p>
+							  <p>Sales</p>
 							</div>
 							<div class="icon">
 							  <i class="ion ion-person-add"></i>
@@ -282,7 +282,7 @@
         <div class="col-md-8">
           <div class="box box-danger">
             <div class="box-header with-border">
-              <i class="fa fa-random"></i><h3 class="box-title">Kondisi Hidrologi</h3>
+              <i class="fa fa-random"></i><h3 class="box-title">Daily Sales</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
@@ -325,7 +325,7 @@
 		<div class="col-md-4">
           <div class="box box-danger">
             <div class="box-header with-border">
-              <i class="fa fa-random"></i><h3 class="box-title">Transaksi Terhutang</h3>
+              <i class="fa fa-random"></i><h3 class="box-title">Receiveable</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body no-padding">
@@ -520,11 +520,11 @@ $total_year_ach = (($total3/$target_year)*100);
 		var myChart = new Chart(ctx, {
 			type: 'bar',
 			data: {
-				labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+				labels: ["Juni", "Juli", "Agustus", "September", "Oktober", "November"],
 				datasets: [{
-					label: '# of Votes',
+					label: '# of Sales',
 					//data: [12, 19, 3, 5, 2, 3],
-					data: [12, 19, 3, 5, 2, 3],
+					data: [1244, 1942, 2322, 2312, 2319, 3544],
 					backgroundColor: [
 						'rgba(255, 99, 132, 0.2)',
 						'rgba(54, 162, 235, 0.2)',
@@ -568,6 +568,15 @@ $total_year_ach = (($total3/$target_year)*100);
 					'rgba(255, 159, 64, 0.2)',
 					'rgba(215, 130, 64, 0.2)'
 				],
+				borderColor: [
+					'rgba(255, 99, 132, 1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(215, 130, 64, 1)'
+				],
 				yAxisID: 'y-axis-1',
 				data: [13, 20, 5, 3, 5, 9, 2]
 			}, {
@@ -580,6 +589,15 @@ $total_year_ach = (($total3/$target_year)*100);
 					'rgba(153, 102, 255, 0.2)',
 					'rgba(255, 159, 64, 0.2)',
 					'rgba(215, 130, 64, 0.2)'
+				],
+				borderColor: [
+					'rgba(255, 99, 132, 1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(215, 130, 64, 1)'
 				],
 				yAxisID: 'y-axis-2',
 				data: [12, 19, 3, 5, 2, 3, 4]
@@ -663,6 +681,9 @@ $total_year_ach = (($total3/$target_year)*100);
 					backgroundColor: [
 						'rgba(255, 99, 132, 0.2)',
 					],
+					borderColor: [
+					'rgba(255, 99, 132, 1)'
+					],
 					yAxisID: 'y-axis-1',
 					data: [13, 20, 5, 3, 5, 9, 2]
 				}, {
@@ -670,6 +691,9 @@ $total_year_ach = (($total3/$target_year)*100);
 					backgroundColor: [
 						
 						'rgba(153, 102, 255, 0.2)',
+					],
+					borderColor: [
+					'rgba(255, 99, 132, 1)'
 					],
 					yAxisID: 'y-axis-2',
 					data: [12, 19, 3, 5, 2, 3, 4]
@@ -715,15 +739,15 @@ $total_year_ach = (($total3/$target_year)*100);
 		var myLineChart = new Chart(line, {
 			type: 'line',
 			data: {
-				labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+				labels: ["Juni", "Juli", "Agustus", "September", "Oktober", "November"],
 				datasets: [{
 					label: '# of Votes',
-					data: [12, 19, 3, 5, 2, 3],
+					data: [1244, 1942, 1322, 1312, 1319, 944],
 					backgroundColor: [
-						'rgba(255, 99, 132, 0.2)',
+						'rgba(255, 99, 132, 0.2)'
 					],
 					borderColor: [
-						'rgba(255,99,132,1)',
+						'rgba(255,99,132,1)'
 					],
 					borderWidth: 1
 				}]

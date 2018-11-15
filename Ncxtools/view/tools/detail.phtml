@@ -1,0 +1,110 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<style>
+	.content{
+		padding-bottom: 100px;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<h3>Job Post</h3>
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<h3>Detail</h3>
+			<p>update value detail history</p>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding-top: 30px;">
+		  <div class="col-md-12">
+			<div class="box-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Old Value</th>
+							<th>New Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Date Update</td>
+							<td colspan="2">2018-04-06 10:06:44</td>
+						</tr>
+						<tr>
+							<td>Order Id</td>
+							<td>1-127GQP0</td>
+							<td>1-127GYJ2</td>
+						</tr>
+						<tr>
+							<td>Account Id</td>
+							<td>2JX-94</td>
+							<td>2JX-94</td>
+						</tr>
+						<tr>
+							<td>Customer Account</td>
+							<td>1-2JX-94</td>
+							<td>1-2JX-94</td>
+						</tr>
+						<tr>
+							<td>Billing Account</td>
+							<td>1-2JF-112</td>
+							<td>1-2JK-350</td>
+						</tr>
+						<tr>
+							<td>Service Account</td>
+							<td>1-2KM-9</td>
+							<td>1-2KM-9</td>
+						</tr>
+						<tr>
+							<td>Order Fulfillment Status</td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Change Reason Code</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td>Job Action Name</td>
+							<td colspan="2">Job Posko</td>
+						</tr>
+						<tr>
+							<td>Status</td>
+							<td colspan="2">Success</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		  </div>
+	  </div>
+	</div>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	$("#example").dataTable({
+	});
+	
+	$.ajax({
+		url:"<?php echo $this->basePath()?>/ncxtools/data/load-detail",  
+		type:"POST",  
+		data : {detail_id : '<?php echo $this->detail_id;?>'},
+		success:function(data){
+			
+		}
+	});
+</script>

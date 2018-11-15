@@ -1,0 +1,348 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+   folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/_all-skins.min.css">
+<style>
+	li .active {
+		background: #e7e7e7;
+	}
+	.content{
+		padding-bottom: 100px;
+	}
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+	
+	.container{
+		width : 100%;
+	}
+	
+	.treeview{
+		padding : 0px 10px 0px 10px !important;
+	}
+	
+	.sidebar-menu li > a:hover {
+		//background-color:lightgray;
+		color:black;
+	}
+	
+	.query{
+		margin-left : 40px;
+		font-weight: 700;
+	}
+	.query-sub{
+		margin-left : 20px;
+		font-weight: 400;
+		color: black;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="col-md-8"><label style="font-weight: unset;font-size:12px"><b style="font-size:25px"> Rekon Master</b> SID NCX - OSS (Basis Order)</label></div>
+			<div class="col-md-4 pull-right" style="padding-top: 30px;color:white"><div class="pull-right"><label>Last Update : </label><label id="last_update"></label></div></div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding: 15px;">
+			<div class="col-md-3">
+				<aside class="main-sidebar" style="padding: 0px 15px 15px 15px; !important;min-width:315px;border-radius:5px">
+			<!-- sidebar: style can be found in sidebar.less -->
+				<section class="sidebar">
+				  <!-- /.search form -->
+				  <!-- sidebar menu: : style can be found in sidebar.less -->
+				  <ul class="sidebar-menu" style="padding: 0px; border:solid 1px #d9534f;min-height:450px;background: white;">
+					<li class="header" style="background-color:#d9534f;"><h3 style="padding-top : 0px;margin:0px;font-size:15px;"><b style="color:white">Hirarki Rekon</b></li>
+					<?php
+					$aa = explode('/',strtok($_SERVER["REQUEST_URI"],'?'));
+					$link = str_replace('detail','',str_replace('-detail','',$aa[3]));
+					foreach($this->menu_rekon as $row){
+						$active = "";
+						foreach($row['index'] as $temp){
+							if($temp == $link){
+								$active = "active";
+							}
+						}
+					?>
+						<li class="treeview <?php echo $active;?>">
+						  <a href="#">
+							<i class="fa <?php echo $row['ICON']; ?>"></i> <span><?php echo $row['NAME'];?></span>
+							<span class="pull-right-container">
+							  <i class="fa fa-angle-left pull-right"></i>
+							</span>
+						  </a>
+						  <?php if(!empty($row['detail'])){?>
+							  <ul class="treeview-menu">
+								<?php foreach($row['detail'] as $val){?>
+								<li style="white-space: normal;" <?php if($val['LINK'] == $link){echo $active = "class='active'";}?>>
+								  <a <?php if($val['LINK'] == $link){echo $active = "class='active'";}?> href="<?php if($val['LINK'] != '#' && $val['LINK'] != ''){$this->basePath()?>/ncxtools/tools/<?php echo $val['LINK'];}else{echo "#";}?>"><i class="fa fa-circle-o"></i> <?php echo $val['NAME']?>
+								  </a>
+								</li>
+								<?php }?>
+							  </ul>
+						  <?php }?>
+						</li>
+					<?php
+					}
+					?>
+				  </ul>
+				</section>
+				<!-- /.sidebar -->
+			  </aside>
+			</div>
+		  <div class="col-md-9" style="min-height:450px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+				<label class="col-md-10"><h4 style="width:70%"><?php echo strtoupper('SID NCX - OSS (Basis Order)');?></h4></label><div class="col-md-2"><button class="btn btn-default pull-right" onclick="return view_code()">Show Query</button></div>
+				<table class="table table-hover table-strips" id="example">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>Status</th>
+							<th>Jumlah Data</th>
+							<th>Persentase</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="body-content">
+						<tr>
+							<td>1</td>
+							<td>All Data</td>
+							<td id="all_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="all_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/sid-ncx-noss-detail?stat=all" class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>COMPLY</td>
+							<td id="val_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="val_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/sid-ncx-noss-detail?stat=COMPLY" class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>NOT COMPLY</td>
+							<td id="not_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="not_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/sid-ncx-noss-detail?stat=NOT COMPLY" class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+					</tbody>
+				</table>
+		  </div>
+		  <div class="col-md-12" style="padding:15px 0px 0px 30px">
+			  <div id="kirim_toggle" style="display:none" class="pull-right">
+				<button id="send" class="btn btn-danger" type="button">Kirim</button>
+				<a class="btn btn-warning pull-left" href="<?php echo $this->basePath()?>/ncxtools/tools/bulktermin">Batal</a>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+	</form>
+	<div id="modal_query" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">SID NCX - OSS</h4>
+		  </div>
+		  <div class="modal-body column table-responsive" style="max-height: 450px;padding-left: 50px;">
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:0px 0px 15px 0px;">1. NCX Source (Step Table Input)</label>
+					<button class="btn btn-xs btn-default pull-right" onclick="myFunction('ncx_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="ncx_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">select distinct service_num 
+					from dwh_sales.f_sid_ncx_tibs</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub" id="ncx_source">distinct service_num </div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">dwh_sales.f_sid_ncx_tibs </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">2. STEP DB JOIN</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('tibs_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="tibs_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">select distinct a.service_num sid_ncx, b.id sid_noss
+					from dwh_sales.f_sid_ncx_tibs, uim_prod_new.service@dbl_uimprod_new
+					where b.id = a.service_num</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">distinct a.service_num sid_ncx,</div>
+							<div class="query-sub">b.id sid_noss</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">wh_sales.f_sid_ncx_tibs,</div>
+							<div class="query-sub">uim_prod_new.service@dbl_uimprod_new</div>
+						</div>
+						<div class="query">
+							WHERE
+							<div class="query-sub">b.id = a.service_num</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">3. Step Merge ROWS</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('merge_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="merge_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">Merge berdasarkan kolom X_PTI1_ACCNT_NAS(Account_Nas) dan berdasarkan kolom sid_ncx</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							MERGE
+							<div class="query-sub">Berdasarkan kolom sid_ncx</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">4. Step Filter Rows (Where Clauses)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('filter_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="filter_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">select
+					case
+					when sid_ncx = sid_noss then 'COMPLY'
+					else 'NOT COMPLY'
+					end status</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+						CASE
+							<div class="query">
+								WHEN
+								<div class="query-sub">sid_ncx = sid_noss then 'COMPLY'</div>
+							</div>
+							<div class="query">
+								ELSE
+								<div class="query-sub">'NOT COMPLY'</div>
+							</div>
+						</div>
+						<div class="query">
+							END
+							<div class="query-sub">STATUS</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">5. Step Table Output (Query menampilkan Data Mart)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('out_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="out_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT * FROM DWH_SALES.F_SID_NCX_NOSS</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">*</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">DWH_SALES.F_SID_NCX_NOSS</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/demo.js"></script>
+<script>
+	$.ajax({
+			url:"<?php echo $this->basePath()?>/ncxtools/data/sidncxnoss",  
+			type:"POST",
+			data : "",
+			success:function(datax){
+				if(datax.code == 0){
+					$.each(datax.data, function (i, item){
+						document.getElementById('all_tot').innerHTML = item.TOTAL;
+						document.getElementById('val_tot').innerHTML = item.VALID;
+						document.getElementById('not_tot').innerHTML = item.NOT_VALID;
+						
+						document.getElementById('all_per').innerHTML = (item.TOTAL_PERCENT)+" %";
+						document.getElementById('val_per').innerHTML = (item.VALID_PERCENT)+" %";
+						document.getElementById('not_per').innerHTML = (item.NOT_VALID_PERCENT)+" %";
+					});
+					
+					
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status);
+				alert(thrownError);
+			  }
+	   });
+	   
+	   $.ajax({
+			url:"<?php echo $this->basePath()?>/ncxtools/data/getcacustreflast",  
+			type:"POST",
+			data : {tabel:'f_order_sid_ncx_oss'},
+			success:function(datax){
+				if(datax.code == 0){
+					$('#last_update').text(datax.data[0]['LAST_UPDATE']);				
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status);
+				alert(thrownError);
+			  }
+		});
+	  function view_code(){
+			$('#modal_query').modal();
+		}
+		
+		function myFunction(xxx) {
+		  /* Get the text field */
+		  console.log(xxx);
+		  var copyText = document.getElementById(xxx);
+
+		  /* Select the text field */
+		  copyText.select();
+
+		  /* Copy the text inside the text field */
+		  document.execCommand("copy");
+
+		  /* Alert the copied text */
+		  //alert("Copied the text: " + copyText.value);
+		} 
+</script>

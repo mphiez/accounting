@@ -1,0 +1,82 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<style>
+	.content{
+		margin-bottom : 50px;
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <h3>Search Order</h3>
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="form-group">
+				<div class="col-md-2">
+					<label>Search Keyword</label>
+				</div>
+				<div class="col-md-4">
+					<input type="text" value="" placeholder="Silahkan masukan keyword pencarian.." id="from" class="form-control">
+				</div>
+				<div class="col-md-2">
+					<label>Keyword Category</label>
+				</div>
+				<div class="col-md-3">
+					<select id="category" class="form-control">
+						<option value="">Search All</option>
+						<option value="CA">Customer Account</option>
+						<option value="BA">BIlling Account</option>
+						<option value="SA">Service Account</option>
+						<option value="ORDER">Order ID</option>
+					</select>
+				</div>
+				<div class="col-md-1">
+					<button id="kirim" onclick="return send()" class="btn btn-default"> Cari </button>
+				</div>
+			</div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding-top: 30px;">
+		  <div class="col-md-12">
+				<table class="table table-hover table-strips" id="example">
+					<thead>
+						<th>Order</th>
+						<th>Aggrement</th>
+						<th>Asset</th>
+						<th>Link Items</th>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+		  </div>
+	  </div>
+	</div>
+	<div class="col-md-12">
+	  <div id="container"></div>
+	</div>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	$("#example").dataTable();
+</script>

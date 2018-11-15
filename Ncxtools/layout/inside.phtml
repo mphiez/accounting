@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="homeurl" content="<?php echo($this->home); ?>" />
+	<link id="favicon" rel="shortcut icon" href="<?php echo $this->basePath(); ?>/images/icon.png" type="image/png">
+    <title><?php echo($this->title . (empty($this->tagline) ? '' : ' - ' . $this->tagline)); ?></title>
+    <?php if (isset($this->libraries)) $this->libraries->printHeader($this->basePath()); ?>
+  </head>
+  <body class="vanilla inside">
+    <div class="header">
+      <nav class="navbar navbar-default shadow">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#vanilla-nav" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="<?php echo($this->basePath()); ?>">
+              <img src="<?php echo($this->basePath()); ?>/images/vanilla-logo.png" />
+              <span><?php echo($this->title); ?></span>
+            </a>
+          </div>
+          <div class="collapse navbar-collapse" id="vanilla-nav">
+            <ul class="nav navbar-nav">
+              <!-- li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrative <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="<?php echo($this->basePath() . '/composite/form/user'); ?>">Manage Users</a></li>
+                </ul>
+              </li -->
+              <?php
+              function print_menu($item, $base) {
+
+                  $url = $base . '/' . $item['url'];
+
+                  if (count($item['children']) > 0) {
+                      echo('<li class="dropdown">');
+                      echo('<a href="' . $url . '" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' . $item['title'] . ' <span class="caret"></span></a>');
+                      echo('<ul class="dropdown-menu">');
+                      foreach ($item['children'] as $subitem) {
+                          print_menu($subitem, $base);
+                      }
+                      echo('</ul>');
+                      echo('</li>');
+                  } else {
+                      echo('<li>');
+                      echo('<a href="' . $url . '">' . $item['title'] . '</a>');
+                      echo('</li>');
+                  }
+
+              }
+              foreach ($this->menu as $item) {
+                  print_menu($item, $this->basePath());
+              }
+              ?>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span class="glyphicon glyphicon-user"></span><span> <?php echo(ucwords(strtolower(isset($this->session) ? $this->session->get('name') : ''))); ?> </span><span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a id="naf-logout" href="<?php echo($this->basePath() . '/logout'); ?>"><span class="glyphicon glyphicon-log-out"></span><span> Logout</span></a></li>
+                </ul>
+              </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+              </div>
+              <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="content">
+      <div class="container"><?php
+        //echo('<pre>'); print_r($this->menu); echo('</pre>');
+        echo($this->content);
+      ?></div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="copyright">
+          Vanilla Theme - Powered by Neuron Application Framework &copy; 2018
+        </div>
+      </div>
+    </div>
+  </body>
+  <?php if (isset($this->libraries)) $this->libraries->printFooter($this->basePath()); ?>
+</html>

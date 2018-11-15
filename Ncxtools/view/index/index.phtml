@@ -1,0 +1,126 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<style>
+
+
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row well">
+		<div class="col-md-12">
+			<h3>Rekap</h3>
+			<p>Rekapitulasi Order NCX</p>
+		</div>
+	  </div>
+	  <div class="row">
+		  <div class="col-md-12">
+			<div class="col-md-12">
+				<table class="table" id="example">
+					<thead>
+						<tr>
+							<th>MONITOR_STATUS</th>
+							<th>DES_ALL</th>
+							<th>DES_BMS_1</th>
+							<th>DES_BMS_2</th>
+							<th>DES_EMS</th>
+							<th>DES_ERS</th>
+							<th>DES_FMS</th>
+							<th>DES_GMS</th>
+							<th>DES_HWS</th>
+							<th>DES_IBS</th>
+							<th>DES_MAS</th>
+							<th>DES_MCS</th>
+							<th>DES_MLS</th>
+							<th>DES_PCS</th>
+							<th>DES_thS</th>
+							<th>DES_THS</th>
+							<th>DES_TMS</th>
+							<th>DBS_ALL</th>
+							<th>DBS_DVB</th>
+							<th>DBS_MFB</th>
+							<th>DBS_MIB</th>
+							<th>DBS_SMB</th>
+							<th>DBS_SVB</th>
+							<th>DBS_thB</th>
+							<th>DGS_ALL</th>
+							<th>DGS_CGS</th>
+							<th>DGS_GAS</th>
+							<th>DGS_LGS</th>
+							<th>DGS_MPS</th>
+
+						</tr>
+					</thead>
+					<tbody id="body-content">
+					</tbody>
+				</table>
+			</div>
+		  </div>
+	  </div>
+	</div>
+	<div class="col-md-12">
+	  <div id="container"></div>
+	</div>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	//$("#example").dataTable();
+	$.ajax({
+		url:"<?php echo $this->basePath()?>/ncxtools/data/load-rekap",  
+		type:"POST",  
+		data : {},
+		success:function(data){
+			$.each(data.data, function(i, item){
+				$('#body-content').append('<tr>'+
+					'<td>'+item.MONITOR_STATUS+'</td>'+
+					'<td>'+item.DES_ALL+'</td>'+
+					'<td>'+item.DES_BMS_1+'</td>'+
+					'<td>'+item.DES_BMS_2+'</td>'+
+					'<td>'+item.DES_EMS+'</td>'+
+					'<td>'+item.DES_ERS+'</td>'+
+					'<td>'+item.DES_FMS+'</td>'+
+					'<td>'+item.DES_GMS+'</td>'+
+					'<td>'+item.DES_HWS+'</td>'+
+					'<td>'+item.DES_IBS+'</td>'+
+					'<td>'+item.DES_MAS+'</td>'+
+					'<td>'+item.DES_MCS+'</td>'+
+					'<td>'+item.DES_MLS+'</td>'+
+					'<td>'+item.DES_PCS+'</td>'+
+					'<td>'+item.DES_TDS+'</td>'+
+					'<td>'+item.DES_THS+'</td>'+
+					'<td>'+item.DES_TMS+'</td>'+
+					'<td>'+item.DBS_ALL+'</td>'+
+					'<td>'+item.DBS_DVB+'</td>'+
+					'<td>'+item.DBS_MFB+'</td>'+
+					'<td>'+item.DBS_MIB+'</td>'+
+					'<td>'+item.DBS_SMB+'</td>'+
+					'<td>'+item.DBS_SVB+'</td>'+
+					'<td>'+item.DBS_TDB+'</td>'+
+					'<td>'+item.DGS_ALL+'</td>'+
+					'<td>'+item.DGS_CGS+'</td>'+
+					'<td>'+item.DGS_GAS+'</td>'+
+					'<td>'+item.DGS_LGS+'</td>'+
+					'<td>'+item.DGS_MPS+'</td>'+
+
+				'</tr>'); 
+			});
+			$("#example").dataTable({
+				"scrollX": true
+			});
+		}  
+   });
+</script> 

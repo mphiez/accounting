@@ -137,7 +137,7 @@ table.bordered th {
 </style>
 	<table width="100%" class="gridtable-head"  width='100%'>
 		<tr>
-			<td colspan="4"><img src="<?php echo $logo;?>" height="80" width="180"></td>
+			<td colspan="4"><img src="<?php echo $logo;?>" height="80px" style="margin-top:20px"></td>
 			<td align="right"  colspan="4" class="font"><h1>INVOICE</h1></td>
 		</tr>
 	</table>

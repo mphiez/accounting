@@ -1,0 +1,383 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<style>
+	.list-group-item, .list-group-item > label{
+		cursor:pointer;
+	}
+	.list-group-item:hover, .list-group-item > label:hover{
+		background-color:lightgray;
+	}
+	
+	.nav-tabs > li.active > a{
+		background-color : #d9534f;
+		color: #F9F4F4;
+	}
+	
+	.nav-tabs > li.active > a:hover{
+		background-color : #d9534f;
+		color: #F9F4F4;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:0px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<h3>Job Monitoring</h3>
+			<p>NCX Tool Job List </p>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding-top: 30px;">
+		  <div class="col-md-12">
+				<div class="col-md-3">
+					<ul class="list-group list-group-unbordered">
+						<li class="list-group-item center active" style="text-align:center;background-color: #d9534f;border-color: #d43f3a;">
+							<label>Job List</label>
+						</li>
+						<li class="list-group-item" onclick="return show('from_ncx')">
+							<label><b>Query Job NCX</b></label>
+							<p>Query NCX Data Status *</p>
+						</li>
+						<li class="list-group-item"  onclick="return show('to_tibs')">
+							<label><b>Job Update Tibs</b></label>
+							<p>Query Update Data Tibs</p>
+						</li>
+						<li class="list-group-item" onclick="return show('to_ncx')">
+							<label><b>Job Update NCX</b></label>
+							<p>Query Update NCX Status Success</p>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-9">
+					<div class="nav-tabs-custom">
+						<div class="tab-content">
+							<ul class="nav nav-tabs">
+							  <li class="active" onclick="return clicke()"><a href="#activity" data-toggle="tab">Detail</a></li>
+							  <li><a href="#education" data-toggle="tab" onclick="return clicke()">Log</a></li>
+							  <li><a href="#experience" data-toggle="tab" onclick="return clicke()">Data</a></li>
+							</ul>
+								<br>
+							  <input type="text" style="display:none" id="test">
+							  <br>
+							  <!-- /.tab-pane -->
+							  <div class="tab-pane active" id="activity">
+								<table class="table table-hover table-strips">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Job Name</th>
+											<th>Frequency</th>
+											<th>Last Start</th>
+											<th>Last End</th>
+											<th>Tool</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody id="body-content">
+										<tr id="from_ncx">
+											<td>1</td>
+											<td>Query NCX</td>
+											<td><p id="frek_1">00:00</p></td>
+											<td>08-05-2018 01:14:00</td>
+											<td>08-05-2018 02:01:59</td>
+											<td><input type="checkbox" checked></td>
+											<td><b style="color:green" onclick="return active_data('1','00','00')" id="active_1">Active</b></td>
+										</tr>
+										<tr style="display:none" id="to_tibs">
+											<td>2</td>
+											<td>Update TIBS</td>
+											<td><p id="frek_2">00:30</p></td>
+											<td>08-05-2018 01:14:20</td>
+											<td>08-05-2018 02:45:39</td>
+											<td><input type="checkbox" checked></td>
+											<td><b style="color:green" onclick="return active_data('2','00','30')" id="active_2">Active</b></td>
+										</tr style="display:none">
+										<tr style="display:none" id="to_ncx">
+											<td>3</td>
+											<td>Update NCX</td>
+											<td><p id="frek_3">24:00</p></td>
+											<td>08-05-2018 01:02:21</td>
+											<td>08-05-2018 03:45:34</td>
+											<td><input type="checkbox" checked></td>
+											<td><b style="color:green" onclick="return active_data('3','24','00')" id="active_3">Active</b></td>
+										</tr>
+									</tbody>
+								</table>
+							  </div>
+							  <!-- /.tab-pane -->
+							  <div class="tab-pane" id="education" style="overflow-x: auto;    white-space: nowrap;">
+									<table class="table" id="example">
+										<thead>
+											<tr>
+												<th>Date</th>
+												<th>Order Id</th>
+												<th>Account Id</th>
+												<th>CA</th>
+												<th>BA</th>
+												<th>SA</th>
+												<th>User Action</th>
+												<th>Job Name</th>
+												<th>Status</th>
+												<th>Job Action</th>
+											</tr>
+										</thead>
+										<tbody id="body-content">
+											<tr>
+												<td>2018-04-06 10:06:44</td>
+												<td>1-127GQP0</td>
+												<td>2JX-94</td>
+												<td>1-2JX-94</td>
+												<td>1-2JK-350</td>
+												<td>1-2KM-9</td>
+												<td>Job</td>
+												<td>Job Periodik</td>
+												<td>Success</td>
+												<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/4">Detail</a><button class="btn btn-danger">Rollback</button></td>
+											</tr>
+											<tr>
+												<td>2018-04-23 10:06:44</td>
+												<td>1-127GQP0</td>
+												<td>2JX-43</td>
+												<td>1-2JX-34</td>
+												<td>0-2J8-330</td>
+												<td>0-2JX-9</td>
+												<td>Job</td>
+												<td>Job Periodik</td>
+												<td>Success</td>
+												<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/1">Detail</a><button class="btn btn-danger">Rollback</button></td>
+											</tr>
+											<tr>
+												<td>2018-04-26 10:05:44</td>
+												<td>1-127GQP0</td>
+												<td>2JX-94</td>
+												<td>1-2JXL-94</td>
+												<td>1-2J2-330</td>
+												<td>1-2JX-9</td>
+												<td>Posko</td>
+												<td>Job Posko</td>
+												<td>Success</td>
+												<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/2">Detail</a><button class="btn btn-danger">Rollback</button></td>
+											</tr>
+											<tr>
+												<td>2018-04-26 15:06:44</td>
+												<td>1-127GQP0</td>
+												<td>2JX-94</td>
+												<td>1-2JX-94</td>
+												<td>1-2J8-330</td>
+												<td>1-2JX-9</td>
+												<td>Posko</td>
+												<td>Job Posko</td>
+												<td>Success</td>
+												<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/3">Detail</a><button class="btn btn-danger">Rollback</button></td>
+											</tr>
+										</tbody>
+									</table>
+							  </div>
+							  <!-- /.tab-pane -->
+
+							  <div class="tab-pane" id="experience" style="overflow-x: auto;    white-space: nowrap;">
+								<table class="table" id="example2">
+									<thead>
+										<tr>
+											<th>Date</th>
+											<th>Order Id</th>
+											<th>Account Id</th>
+											<th>CA</th>
+											<th>BA</th>
+											<th>SA</th>
+											<th>User Action</th>
+											<th>Job Name</th>
+											<th>Status</th>
+											<th>Job Action</th>
+										</tr>
+									</thead>
+									<tbody id="body-content">
+										<tr>
+											<td>2018-04-26 10:05:44</td>
+											<td>1-127GQP0</td>
+											<td>2JX-94</td>
+											<td>1-2JXL-94</td>
+											<td>1-2J2-330</td>
+											<td>1-2JX-9</td>
+											<td>Posko</td>
+											<td>Job Posko</td>
+											<td>Inprogress</td>
+											<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/2">Detail</a><button class="btn btn-danger">Delete</button></td>
+										</tr>
+										<tr>
+											<td>2018-04-26 15:06:44</td>
+											<td>1-127GQP0</td>
+											<td>2JX-94</td>
+											<td>1-2JX-94</td>
+											<td>1-2J8-330</td>
+											<td>1-2JX-9</td>
+											<td>Posko</td>
+											<td>Job Posko</td>
+											<td>Inprogress</td>
+											<td><a class="btn btn-default" href="<?php echo $this->basePath()?>/ncxtools/tools/detail/3">Detail</a><button class="btn btn-danger">Delete</button></td>
+										</tr>
+									</tbody>
+								</table>
+							  </div>
+						</div>
+						  <!-- /.tab-pane -->
+						</div>
+						<!-- /.tab-content -->
+					  </div>
+					<!-- <table class="table table-hover table-strips" id="example" style="display:none">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Job Name</th>
+								<th>Frequency</th>
+								<th>Last Start</th>
+								<th>Last End</th>
+								<th>Tool</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody id="body-content">
+							<tr>
+								<td>1</td>
+								<td>Job Posko</td>
+								<td><p id="frek_1">00:00</p></td>
+								<td>08-05-2018 01:14:00</td>
+								<td>08-05-2018 02:01:59</td>
+								<td><input type="checkbox" checked></td>
+								<td><b style="color:green" onclick="return active_data('1','00','00')" id="active_1">Active</b></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Job Periodik</td>
+								<td><p id="frek_2">00:30</p></td>
+								<td>08-05-2018 01:14:20</td>
+								<td>08-05-2018 02:45:39</td>
+								<td><input type="checkbox" checked></td>
+								<td><b style="color:green" onclick="return active_data('2','00','30')" id="active_2">Active</b></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>Job Delta</td>
+								<td><p id="frek_3">24:00</p></td>
+								<td>08-05-2018 01:02:21</td>
+								<td>08-05-2018 03:45:34</td>
+								<td><input type="checkbox" checked></td>
+								<td><b style="color:green" onclick="return active_data('3','24','00')" id="active_3">Active</b></td>
+							</tr>
+						</tbody>
+					</table>-->
+				</div>
+		  </div>
+	  </div>
+	</div>
+	<div id="modal_change" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog modal-dialog-sm" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info">
+				<input type="hidden" id="index">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group row">
+							<label class="col-md-4">Status</label>
+							<div class="col-sm-8" >
+								<select id="update-status"  class="form-control">
+									<option value="active">active</option>
+									<option value="Non-active">Non-active</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-md-4">Frequency</label>
+							<div class="col-sm-2" >
+								<select id="freq-jam" class="form-control" >
+									<?php for($i = 0; $i <=60; $i++){
+										$x = $i;
+									if($i < 10){
+										$x = '0'.$i;
+									}	
+										?>
+									<option value="<?php echo $x;?>"><?php echo $x;?></option>
+									<?php }?>
+								</select>
+							</div>
+							<div class="col-sm-1">
+							:
+							</div>
+							<div class="col-sm-2" >
+								<select id="freq-menit" class="form-control" >
+									<?php for($i = 0; $i <=60; $i++){
+										$x = $i;
+									if($i < 10){
+										$x = '0'.$i;
+									}	
+										?>
+									<option value="<?php echo $x;?>"><?php echo $x;?></option>
+									<?php }?>
+								</select>
+							</div>
+							<div class="col-sm-3">
+						</div>
+					</div>
+				</div>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+			<button type="button" class="btn btn-default" id="save-update">Save</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	function active_data(x,y,z){
+		$('#modal_change').modal();
+		$('#index').val(x);
+		$('#freq-jam').val(y);
+		$('#freq-menit').val(z);
+	}
+	
+	function show(x){
+		document.getElementById('from_ncx').style.display = 'none';
+		document.getElementById('to_ncx').style.display = 'none';
+		document.getElementById('to_tibs').style.display = 'none';
+		document.getElementById(x).style.display = '';
+	}
+	
+	
+	$('#save-update').click(function(){
+		var sts = $('#update-status').val();
+		var x1 = 'active_'+$('#index').val();
+		
+		var x2 = 'frek_'+$('#index').val();
+		var jam = $('#freq-jam').val()+':'+$('#freq-menit').val();
+		
+		var color = 'orange';
+		if(sts == 'active'){
+			color = 'green';
+		}
+
+		
+		
+		$('#modal_change').modal('toggle');
+		document.getElementById(x1).innerHTML= sts;
+		document.getElementById(x2).innerHTML= jam;
+		document.getElementById(x1).style.color= color;
+	});
+	$("#example2").dataTable({
+
+	});
+	$("#example").dataTable({
+
+	});
+	
+	function clicke(){
+		document.getElementById('test').style.display="";
+		document.getElementById('test').focus();
+		document.getElementById('test').style.display="none";
+	};
+</script>

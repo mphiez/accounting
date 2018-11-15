@@ -1,0 +1,323 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script type='text/javascript' src="<?php echo $this->basePath(); ?>/libraries/bootstrap/js/bootbox.js"></script>
+<style>
+
+
+	.content{
+		padding-bottom: 100px;
+	}
+
+	.center 
+	{
+	    text-align: center; 
+	    vertical-align: middle;
+	}
+
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12" style="min-height:350px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+		<table class="table table-hover table-strips rata" id="example2">
+			<thead>
+				<tr>
+					<th rowspan="2" style="width: 10px !important;" class="center">No</th>
+					<th rowspan="2" class="center">Tanggal</th>
+					<th colspan="2" class="center">Value</th>
+					<th rowspan="2" style="width: 10px !important;" class="center">Procedure</th>
+					<th rowspan="2" style="width: 10px !important;"class="center">Flag</th>
+					<th rowspan="2" style="width: 10px !important;"class="center">TIBS</th>
+					<th rowspan="2" style="width: 10px !important;"class="center">Action</th>
+				</tr>
+				<tr>
+					<th class="center">Before</th>
+					<th class="center">After</th>
+				</tr>
+			</thead>
+			<tbody id="body-content" class="rata">
+
+			</tbody>
+		</table>
+	</div>
+
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer" id="row_save">
+		  	<input type="hidden" id="hidden_value">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+			<button type="button" class="btn btn-danger" onclick="return simpan_complete()">Simpan</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div id="modal-success-rollback" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-rollback"></div>
+		  </div>
+		  <div class="modal-footer" id="row_rollback">
+		  	<input type="hidden" id="value_rollback">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+			<button type="button" class="btn btn-danger" onclick="return simpan_rollback()">Simpan</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	$('#example2').dataTable( {
+			"serverSide": true,
+			"processing": true,
+			"ajax": {
+				url: '<?php echo $this->basePath()?>/ncxtools/data/getInbox',
+				type: "POST",
+				beforeSend: function( xhr ) {
+					document.getElementById('body-content').innerHTML = '<tr><td colspan="7"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td></tr>';
+				},
+			},
+			"columns": [
+				{ "data": "RNUM" },
+				{ "data": "LOGS_TIMESTAMP" },
+				{
+				 sortable: true,
+					 "render": function ( data, type, full, meta ) {
+						 
+						var before = "";
+						if(full.PROCEDURE == 'UPDATE_CABASA'){
+							
+							before = "LOC : "+full.BEFORE.LOC+"<br>"+full.BEFORE.NAME+"<br>"+full.BEFORE.NIPNAS+"<br>"+full.BEFORE.ACCNAS;
+							
+						}else if(full.PROCEDURE == 'MOVE_BA_TO_OTHERS_CA'){
+							
+							before = full.BEFORE.LOC+"<br>"+full.BEFORE.CA+"<br>"+full.BEFORE.NIPNAS;
+							
+						}else if(full.PROCEDURE == 'MERGE_BA'){
+							
+							before = full.BEFORE.PAR_OU_ID+"<br>"+full.BEFORE.LOC_MERGE+"<br>"+full.BEFORE.ACCNAS_MERGE+"<br>"+full.BEFORE.LOC_TARGET+"<br>"+full.BEFORE.ACCNAS_TARGET;
+							
+						}else if(full.PROCEDURE == 'UPDATE_TANGGAL_ORDER'){
+							
+							before = full.BEFORE.ORDER_ID+"<br>"+full.BEFORE.SERVICE_ID+"<br>"+full.BEFORE.PROVISIONING_DT+"<br>"+full.BEFORE.BILL_DT+"<br>"+full.BEFORE.BASO_DT+"<br>"+full.BEFORE.INTEGRATION_DT+"<br>"+full.BEFORE.AGREE_START+"<br>"+full.BEFORE.AGREE_END;
+							
+						}else if(full.PROCEDURE == 'UPDATE_TANGGAL_TERMIN'){
+							
+							before = full.BEFORE.ORDER_ID+"<br>"+full.BEFORE.ASSET_ID+"<br>"+full.BEFORE.SEQUENCE+"<br>"+full.BEFORE.TERMIN_DATE;
+							
+						}
+						return "" + before + "";
+					 }
+				},
+				{
+				 sortable: true,
+					 "render": function ( data, type, full, meta ) {
+						 var after = "";
+						if(full.PROCEDURE == 'UPDATE_CABASA'){
+							
+							after = "LOC : "+full.AFTER.LOC+"<br>"+full.AFTER.NAME+"<br>"+full.AFTER.NIPNAS+"<br>"+full.AFTER.ACCNAS+"<br>"+full.AFTER.USER+"<br>"+full.AFTER.TYPE+"<br>"+full.AFTER.FILE_NAME;
+							
+						}else if(full.PROCEDURE == 'MOVE_BA_TO_OTHERS_CA'){
+							
+							after = full.AFTER.LOC+"<br>"+full.AFTER.CA+"<br>"+full.AFTER.NIPNAS+"<br>"+full.AFTER.USER+"<br>"+full.AFTER.TYPE+"<br>"+full.AFTER.FILE_NAME;
+							
+						}else if(full.PROCEDURE == 'MERGE_BA'){
+										
+							after = full.AFTER.LOC+"<br>"+full.AFTER.ACCNAS+"<br>"+full.AFTER.USER+"<br>"+full.AFTER.TYPE+"<br>"+full.AFTER.FILE_NAME;			
+							
+						}else if(full.PROCEDURE == 'UPDATE_TANGGAL_ORDER'){
+							
+							after = full.AFTER.PROVISIONING_DT+"<br>"+full.AFTER.BILL_DT+"<br>"+full.AFTER.BASO_DT+"<br>"+full.AFTER.INTEGRATION_DT+"<br>"+full.AFTER.AGREE_START+"<br>"+full.AFTER.AGREE_END+"<br>"+full.AFTER.USER+"<br>"+full.AFTER.TYPE+"<br>"+full.AFTER.FILE_NAME;
+							
+						}else if(full.PROCEDURE == 'UPDATE_TANGGAL_TERMIN'){
+							
+							after = full.AFTER.ORDER_ID+"<br>"+full.AFTER.ASSET_ID+"<br>"+full.AFTER.SEQUENCE+"<br>"+full.AFTER.TERMIN_DATE+"<br>"+full.AFTER.USER+"<br>"+full.AFTER.TYPE+"<br>"+full.AFTER.FILE_NAME;
+						}
+						
+						return "" + after + "";
+					 }
+				},
+				{ "data": "PROCEDURE" },
+				{
+				 sortable: true,
+					 "render": function ( data, type, full, meta ) {
+							var status = '';
+							if(full.STATUS_EXT == 0 || full.STATUS_EXT == 9){
+								status = 'Success';
+							}else{
+								status = 'Failed';
+							}
+						return "" + status + "";
+					 }
+				},
+				{
+				 sortable: true,
+					 "render": function ( data, type, full, meta ) {
+							var sts = "Completed";
+							if(full.STATUS == null || full.STATUS == '0'){
+								sts = "Uncompleted";
+							}
+						return "" + sts + "";
+					 }
+				},
+				{
+				 sortable: true,
+					 "render": function ( data, type, full, meta ) {
+							var btn = "";
+							var rol = "";
+							
+							if(full.STATUS_EXT == 0 || full.STATUS_EXT == 9){
+								if(full.PROCEDURE != 'MERGE_BA'){
+									rol = "<button class='btn btn-info btn-xs' onclick='return rollback("+full.ID+")' id='rol_"+full.ID+"'>ROLLBACK</button>";
+								}
+								
+								btn = "<button class='btn btn-success btn-xs' onclick='return complete("+full.ID+")' id='btn_"+full.ID+"'>TIBS COMPLETE</button>";
+								
+							}
+						return "" + btn + rol + "";
+					 }
+				}
+			],
+			"columnDefs": [
+				{ "width": "5%", "targets": 0 },
+				{ "width": "10%", "targets": 1 },
+				{ "width": "25%", "targets": 2 },
+				{ "width": "25%", "targets": 3 },
+				{ "width": "20%", "targets": 4 },
+				{ "width": "10%", "targets": 5 },
+				{ "width": "5%", "targets": 6 },
+			  ],
+		} );
+	
+	function complete(x){
+
+		$('#modal-success-save').modal();
+		document.getElementById('success-info').innerHTML = 'Apakah Anda yakin akan melakukan tibs complete';
+		$("#hidden_value").val(x);
+		
+	}
+
+	function simpan_complete(){
+
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/complete',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				document.getElementById('row_save').innerHTML = '<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+			},
+			data: {
+					ID : $("#hidden_value").val()
+			},
+			success: function(datax) {
+				$('#modal-success-save').modal('hide');
+				if(datax.code == 0){
+					bootbox.alert("Data berhasil disimpan");
+				}else{
+					bootbox.alert("Data gagal disimpan");
+				}
+				
+				document.getElementById('row_save').innerHTML = "<button class='btn btn-success btn-xs' onclick='return complete("+($("#hidden_value").val())+")' id='btn_"+($("#hidden_value").val())+"'>TIBS COMPLETE</button>";
+			}
+		}); 
+
+			
+	}
+	
+	function rollback(x){
+
+		$('#modal-success-rollback').modal();
+		document.getElementById('success-rollback').innerHTML = 'Apakah Anda yakin akan melakukan Rollback';
+		$("#value_rollback").val(x);
+		
+		
+	}
+
+	function simpan_rollback(){
+
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/rollback',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				document.getElementById('row_rollback').innerHTML = '<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+			},
+			data: {
+					ID : $("#value_rollback").val()
+			},
+			success: function(datax) {
+				$('#modal-success-rollback').modal('hide');
+				if(datax.code == 0){
+					bootbox.alert("Data berhasil disimpan");
+					window.location.reload();
+				}else{
+					bootbox.alert("Data gagal disimpan");
+				}
+				
+				document.getElementById('row_rollback').innerHTML = "<button class='btn btn-info btn-xs' onclick='return rollback("+($("#value_rollback").val())+")' id='rol_"+($("#value_rollback").val())+"'>ROLLBACK</button>";
+			}
+		}); 
+
+
+		// bootbox.confirm("Apakah anda yakin akan melakukan Rollback?", function(result){ 
+		// 	if(result == true){
+		// 		$.ajax({
+		// 			url: '<?php echo $this->basePath()?>/ncxtools/data/rollback',
+		// 			type: "POST",
+		// 			data: {
+		// 				ID : x
+		// 			},
+		// 			success: function(data){
+		// 				if(data.code == 0){
+		// 					bootbox.alert("Data berhasil disimpan");
+		// 				}else{
+		// 					bootbox.alert("Data gagal disimpan");
+		// 				}
+		// 			}
+		// 		});
+
+		// 	}
+			
+
+		// })
+
+
+
+	}
+	
+</script>

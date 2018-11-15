@@ -1,0 +1,981 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+   folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/_all-skins.min.css">
+<style>
+	li .active {
+		background: #e7e7e7;
+	}
+	.content{
+		padding-bottom: 100px;
+	}
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+	
+	.container{
+		width : 100%;
+	}
+	
+	.treeview{
+		padding : 0px 10px 0px 10px !important;
+	}
+	
+	.sidebar-menu li > a:hover {
+		//background-color:lightgray;
+		color:black;
+	}
+	.query{
+		margin-left : 40px;
+		font-weight: 700;
+	}
+	.query-sub{
+		margin-left : 20px;
+		font-weight: 400;
+		color: black;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="col-md-8"><label style="font-weight: unset;font-size:12px"><b style="font-size:25px"> Rekon Order</b> NCX vs TIBS (Price)</label></div>
+			<div class="col-md-4 pull-right" style="padding-top: 30px;color:white"><div class="pull-right"><label>Last Update : </label><label id="last_update"></label></div></div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding: 15px;">
+			<div class="col-md-3">
+				<aside class="main-sidebar" style="padding: 0px 15px 15px 15px; !important;min-width:315px;border-radius:5px">
+			<!-- sidebar: style can be found in sidebar.less -->
+				<section class="sidebar">
+				  <!-- /.search form -->
+				  <!-- sidebar menu: : style can be found in sidebar.less -->
+				  <ul class="sidebar-menu" style="padding: 0px; border:solid 1px #d9534f;min-height:450px;background: white;">
+					<li class="header" style="background-color:#d9534f;"><h3 style="padding-top : 0px;margin:0px;font-size:15px;"><b style="color:white">Hirarki Rekon</b></li>
+					<?php
+					$aa = explode('/',strtok($_SERVER["REQUEST_URI"],'?'));
+					$link = str_replace('detail','',str_replace('-detail','',$aa[3]));
+					foreach($this->menu_rekon as $row){
+						$active = "";
+						foreach($row['index'] as $temp){
+							if($temp == $link){
+								$active = "active";
+							}
+						}
+					?>
+						<li class="treeview <?php echo $active;?>">
+						  <a href="#">
+							<i class="fa <?php echo $row['ICON']; ?>"></i> <span><?php echo $row['NAME'];?></span>
+							<span class="pull-right-container">
+							  <i class="fa fa-angle-left pull-right"></i>
+							</span>
+						  </a>
+						  <?php if(!empty($row['detail'])){?>
+							  <ul class="treeview-menu">
+								<?php foreach($row['detail'] as $val){?>
+								<li style="white-space: normal;" <?php if($val['LINK'] == $link){echo $active = "class='active'";}?>>
+								  <a <?php if($val['LINK'] == $link){echo $active = "class='active'";}?> href="<?php if($val['LINK'] != '#' && $val['LINK'] != ''){$this->basePath()?>/ncxtools/tools/<?php echo $val['LINK'];}else{echo "#";}?>"><i class="fa fa-circle-o"></i> <?php echo $val['NAME']?>
+								  </a>
+								</li>
+								<?php }?>
+							  </ul>
+						  <?php }?>
+						</li>
+					<?php
+					}
+					?>
+				  </ul>
+				</section>
+				<!-- /.sidebar -->
+			  </aside>
+			</div>
+		  <div class="col-md-9" style="min-height:450px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+		  
+				<label class="col-md-10"><h4 style="width:70%"><?php echo strtoupper('NCX vs TIBS (Price)');?></h4></label><div class="col-md-2"><button class="btn btn-default pull-right" onclick="return view_code()">Show Query</button></div>
+				<table class="table table-hover table-strips" id="example">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>Status</th>
+							<th>Jumlah Data</th>
+							<th>Persentase</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="body-content">
+						<tr>
+							<td>1</td>
+							<td>All Data</td>
+							<td id="all_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="all_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/ncx-tibs-prince-detail?stat=all"  class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>COMPLY</td>
+							<td id="val_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="val_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/ncx-tibs-prince-detail?stat=COMPLY"  class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>NOT COMPLY</td>
+							<td id="not_tot"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td id="not_per"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading . . .</td>
+							<td><a href="<?php echo $this->basePath()?>/ncxtools/tools/ncx-tibs-prince-detail?stat=NOT COMPLY"  class="btn btn-danger"><i class="glyphicon glyphicon-search"></i> Detail</a></td>
+						</tr>
+					</tbody>
+				</table>
+		  </div>
+		  <div class="col-md-12" style="padding:15px 0px 0px 30px">
+			  <div id="kirim_toggle" style="display:none" class="pull-right">
+				<button id="send" class="btn btn-danger" type="button">Kirim</button>
+				<a class="btn btn-warning pull-left" href="<?php echo $this->basePath()?>/ncxtools/tools/bulktermin">Batal</a>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+	</form>
+	<div id="modal_query" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">NCX vs TIBS (Price)</h4>
+		  </div>
+		  <div class="modal-body column table-responsive" style="max-height: 450px;padding-left: 50px;">
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:0px 0px 15px 0px;">1. Query Source NCX(step table input)</label>
+					<button class="btn btn-xs btn-default pull-right" onclick="myFunction('ncx_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="ncx_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						A .order_num,
+						j.SERVICE_NUM,
+						TRIM (
+							REPLACE (
+								UPPER (D .x_pti1_handling_type),
+								'PPN',
+								''
+							)
+						) ppn,
+						UPPER (
+							TRIM (j.x_pti1_term_payment)
+						) term_payment,
+						REGEXP_REPLACE (
+							REPLACE (
+								UPPER (
+									TRIM (j.x_pti1_term_payment)
+								),
+								'-',
+								''
+							),
+							'\s{2,}',
+							' '
+						) tmp_term_payment,
+						TO_CHAR (
+							MAX (b.x_bill_start_dt) + 7 / 24,
+							'yyyy-mm-dd'
+						) bill_date,
+						SUM (
+							CASE
+							WHEN i.price_type_cd = 'One-Time'
+							AND c.attrib_05 NOT IN (
+								'Suspend',
+								'Resume',
+								'Disconnect'
+							) THEN
+								b.net_pri
+							ELSE
+								0
+							END
+						) price_otc,
+						--sum(case when i.price_type_cd = 'One-Time' then b.net_pri else 0 end) price_otc2,
+						SUM (
+							CASE
+							WHEN i.price_type_cd = 'Recurring'
+							AND c.attrib_05 NOT IN (
+								'Suspend',
+								'Resume',
+								'Disconnect'
+							) THEN
+								b.net_pri
+							ELSE
+								0
+							END
+						) price_rec --sum(case when i.price_type_cd = 'Recurring' then b.net_pri else 0 end) price_rec2
+					FROM
+						ods_ncx.s_order A,
+						ods_ncx.s_order_item b,
+						ods_ncx.s_order_x c,
+						ods_ncx.s_org_ext D,
+						ods_ncx.s_org_ext E,
+						ods_ncx.s_quote_item f,
+						ods_ncx.s_doc_agree G,
+						ods_ncx.s_user H,
+						ods_ncx.s_prod_int i,
+						ods_ncx.s_order_item j
+					WHERE
+						j.service_num IS NOT NULL
+					AND A .rev_num = (
+						SELECT
+							MAX (rev_num)
+						FROM
+							ods_ncx.s_order x
+						WHERE
+							x.order_num = A .order_num
+						AND A .active_flg = 'Y'
+						AND x.status_cd NOT IN (
+							'Abandoned',
+							'x',
+							'Cancelled',
+							'Pending Cancel'
+						)
+					)
+					AND b.milestone_code = 'FULFILL BILLING COMPLETE'
+					AND b.prod_id NOT IN (
+						'1-1NDE2J',
+						'1-1YR0E9',
+						'1-2JDHY',
+						'1-3MOAW'
+					)
+					AND j.milestone_code = 'FULFILL BILLING COMPLETE'
+					AND j.prod_id NOT IN (
+						'1-1NDE2J',
+						'1-1YR0E9',
+						'1-2JDHY',
+						'1-3MOAW'
+					)
+					AND A .row_id = b.order_id
+					AND c.par_row_id (+) = A .row_id
+					AND D .row_id (+) = b.bill_accnt_id
+					AND E .row_id (+) = D .par_ou_id
+					AND f.row_id (+) = b.quote_item_id
+					AND G .row_id (+) = A .agree_id
+					AND H .row_id (+) = A .created_by
+					AND b.prod_id = i.row_id (+)
+					AND b.par_order_item_id = j.row_id (+) --AND a.ORDER_NUM = '1-2624107287'
+					GROUP BY
+						A .order_num,
+						--b.service_num,
+						j.SERVICE_NUM,
+						TRIM (
+							REPLACE (
+								UPPER (D .x_pti1_handling_type),
+								'PPN',
+								''
+							)
+						),
+						UPPER (
+							TRIM (j.x_pti1_term_payment)
+						),
+						REGEXP_REPLACE (
+							REPLACE (
+								UPPER (
+									TRIM (j.x_pti1_term_payment)
+								),
+								'-',
+								''
+							),
+							'\s{2,}',
+							' '
+						) - QUERY SOURCE TIBS billdate dan price (Step TABLE input) SELECT
+							cust_order_num,
+							product_label,
+							MAX (TRIM(billdate)) billdate,
+							SUM (
+								CASE
+								WHEN TRIM (enddate) IS NULL THEN
+									instalasi
+								END
+							) instalasi,
+							SUM (
+								CASE
+								WHEN TRIM (enddate) IS NULL THEN
+									abonemen
+								END
+							) abonemen
+						FROM
+							dwh_sales.all_tibs_order
+						GROUP BY
+							cust_order_num,
+							product_label</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub" id="ncx_source">A .order_num,</div>
+							<div class="query-sub" id="ncx_source">j.SERVICE_NUM,</div>
+							<div class="query-sub" id="ncx_source">TRIM (
+								REPLACE (
+									UPPER (D .x_pti1_handling_type),
+									'PPN',
+									''
+								)
+							) ppn,</div>
+							<div class="query-sub" id="ncx_source">UPPER (
+									TRIM (j.x_pti1_term_payment)
+								) term_payment,</div>
+							<div class="query-sub" id="ncx_source">REGEXP_REPLACE (
+								REPLACE (
+									UPPER (
+										TRIM (j.x_pti1_term_payment)
+									),
+									'-',
+									''
+								),
+								'\s{2,}',
+								' '
+							) tmp_term_payment,</div>
+							<div class="query-sub" id="ncx_source">TO_CHAR (
+								MAX (b.x_bill_start_dt) + 7 / 24,
+								'yyyy-mm-dd'
+							) bill_date,</div>
+							<div class="query-sub" id="ncx_source">SUM (
+								CASE
+								WHEN i.price_type_cd = 'One-Time'
+								AND c.attrib_05 NOT IN (
+									'Suspend',
+									'Resume',
+									'Disconnect'
+								) THEN
+									b.net_pri
+								ELSE
+									0
+								END
+							) price_otc,</div>
+							<div class="query-sub" id="ncx_source">SUM (
+								CASE
+								WHEN i.price_type_cd = 'Recurring'
+								AND c.attrib_05 NOT IN (
+									'Suspend',
+									'Resume',
+									'Disconnect'
+								) THEN
+									b.net_pri
+								ELSE
+									0
+								END
+							) price_rec</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">ods_ncx.s_order A,</div>
+							<div class="query-sub">ods_ncx.s_order_item b,</div>
+							<div class="query-sub">ods_ncx.s_order_x c,</div>
+							<div class="query-sub">ods_ncx.s_org_ext D,</div>
+							<div class="query-sub">ods_ncx.s_org_ext E,</div>
+							<div class="query-sub">ods_ncx.s_quote_item f,</div>
+							<div class="query-sub">ods_ncx.s_doc_agree G,</div>
+							<div class="query-sub">ods_ncx.s_user H,</div>
+							<div class="query-sub">ods_ncx.s_prod_int i,</div>
+							<div class="query-sub">ods_ncx.s_order_item j</div>
+						</div>
+						<div class="query">
+							WHERE
+							<div class="query-sub">j.service_num IS NOT NULL</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">A .rev_num = (
+								<div class="query">
+									SELECT
+									<div class="query-sub">MAX (rev_num)</div>
+								</div>
+								<div class="query">
+									FROM
+									<div class="query-sub">ods_ncx.s_order x</div>
+								</div>
+								<div class="query">
+									WHERE
+									<div class="query-sub">x.order_num = A .order_num</div>
+								</div>
+								<div class="query">
+									AND
+									<div class="query-sub">A .active_flg = 'Y'</div>
+								</div>
+								<div class="query">
+									AND
+									<div class="query-sub">x.status_cd NOT IN (
+										'Abandoned',
+										'x',
+										'Cancelled',
+										'Pending Cancel'
+									)</div>
+								</div>
+							)</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">b.milestone_code = 'FULFILL BILLING COMPLETE'</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">b.prod_id NOT IN (
+								'1-1NDE2J',
+								'1-1YR0E9',
+								'1-2JDHY',
+								'1-3MOAW'
+							)</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">j.milestone_code = 'FULFILL BILLING COMPLETE'</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">j.prod_id NOT IN (
+								'1-1NDE2J',
+								'1-1YR0E9',
+								'1-2JDHY',
+								'1-3MOAW'
+							)</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">A .row_id = b.order_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">c.par_row_id (+) = A .row_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">D .row_id (+) = b.bill_accnt_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">E .row_id (+) = D .par_ou_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">f.row_id (+) = b.quote_item_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">G .row_id (+) = A .agree_id</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">H .row_id (+) = A .created_by</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">b.prod_id = i.row_id (+)</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">b.par_order_item_id = j.row_id (+)</div>
+						</div>
+						<div class="query">
+							GROUP BY
+							<div class="query-sub">A .order_num,</div>
+							<div class="query-sub">j.SERVICE_NUM,</div>
+							<div class="query-sub">TRIM (
+								REPLACE (
+									UPPER (D .x_pti1_handling_type),
+									'PPN',
+									''
+								)
+							),</div>
+							<div class="query-sub">UPPER (
+								TRIM (j.x_pti1_term_payment)
+							),</div>
+							<div class="query-sub">REGEXP_REPLACE (
+								REPLACE (
+									UPPER (
+										TRIM (j.x_pti1_term_payment)
+									),
+									'-',
+									''
+								),
+								'\s{2,}',
+								' '
+							)</div>
+							
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">2. QUERY SOURCE TIBS billdate dan price (Step TABLE input)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('tibs_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="tibs_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						cust_order_num,
+						product_label,
+						MAX (TRIM(billdate)) billdate,
+						SUM (
+							CASE
+							WHEN TRIM (enddate) IS NULL THEN
+								instalasi
+							END
+						) instalasi,
+						SUM (
+							CASE
+							WHEN TRIM (enddate) IS NULL THEN
+								abonemen
+							END
+						) abonemen
+					FROM
+						dwh_sales.all_tibs_order
+					GROUP BY
+						cust_order_num,
+						product_label</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">cust_order_num,</div>
+							<div class="query-sub">product_label,</div>
+							<div class="query-sub">MAX (TRIM(billdate)) billdate,</div>
+							<div class="query-sub">SUM (
+								CASE
+								WHEN TRIM (enddate) IS NULL THEN
+									instalasi
+								END
+							) instalasi,</div>
+							<div class="query-sub">SUM (
+								CASE
+								WHEN TRIM (enddate) IS NULL THEN
+									abonemen
+								END
+							) abonemen</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">dwh_sales.all_tibs_order</div>
+						</div>
+						<div class="query">
+							GROUP BY
+							<div class="query-sub">cust_order_num,</div>
+							<div class="query-sub">product_label</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">3. Query Source ppn dan term of payment TIBS (Step table input)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_source')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_source" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						cust_order_num,
+						product_label,
+						MAX (
+							REPLACE (UPPER(TRIM(ppn)), 'PPN', '')
+						) tibs_ppn,
+						MAX (UPPER(TRIM(tariff_name))) tibs_term_payment,
+						MAX (
+							CASE
+							WHEN tariff_name LIKE '%[%' THEN
+								--regexp_replace(upper(trim(tariff_name)), '.*\[(.+)\].*', '\1')
+								REGEXP_REPLACE (
+									REPLACE (
+										REGEXP_REPLACE (
+											UPPER (TRIM(tariff_name)),
+											'.*\[(.+)\].*',
+											'\1'
+										),
+										'-',
+										''
+									),
+									'\s{2,}',
+									' '
+								)
+							ELSE
+								REGEXP_REPLACE (
+									REPLACE (
+										UPPER (TRIM(tariff_name)),
+										'-',
+										''
+									),
+									'\s{2,}',
+									' '
+								)
+							END
+						) tmp_tibs_term_payment
+					FROM
+						dwh_sales.all_tibs_account_info --where cust_order_num = '1-69692253'
+					GROUP BY
+						cust_order_num,
+						product_label</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">cust_order_num,</div>
+							<div class="query-sub">product_label,</div>
+							<div class="query-sub">MAX (
+								REPLACE (UPPER(TRIM(ppn)), 'PPN', '')
+							) tibs_ppn,</div>
+							<div class="query-sub">MAX (UPPER(TRIM(tariff_name))) tibs_term_payment,</div>
+							<div class="query-sub">MAX (
+								CASE
+								WHEN tariff_name LIKE '%[%' THEN
+									--regexp_replace(upper(trim(tariff_name)), '.*\[(.+)\].*', '\1')
+									REGEXP_REPLACE (
+										REPLACE (
+											REGEXP_REPLACE (
+												UPPER (TRIM(tariff_name)),
+												'.*\[(.+)\].*',
+												'\1'
+											),
+											'-',
+											''
+										),
+										'\s{2,}',
+										' '
+									)
+								ELSE
+									REGEXP_REPLACE (
+										REPLACE (
+											UPPER (TRIM(tariff_name)),
+											'-',
+											''
+										),
+										'\s{2,}',
+										' '
+									)
+								END
+							) tmp_tibs_term_payment</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">dwh_sales.all_tibs_account_info</div>
+						</div>
+						<div class="query">
+							GROUP BY
+							<div class="query-sub">cust_order_num,</div>
+							<div class="query-sub">product_label</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">4. Query Source ppn dan term of payment TIBS (Step table input)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('join_view')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="join_view" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						A .order_num,
+						A .service_num,
+						A .ppn,
+						A .term_payment,
+						A .tmp_term_payment,
+						A .billdate,
+						A .price_otc,
+						A .price_rec,
+						b.tibs_ppn,
+						b.tibs_term_payment,
+						b.tmp_tibs_term_payment,
+						c.billdate,
+						c.instalasi ,.abonemen
+					FROM
+						ods_ncx.s. ORDER A,
+						dwh_sales.all_tibs_account_info b,
+						dwh_sales.all_tibs_order c
+					WHERE
+						A .order_num = b.cust_order_num
+					AND A .service_num = b.product_label
+					AND A .order_num = c.cust_order_num
+					AND A .service_num = c.product_label</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">A .order_num,</div>
+							<div class="query-sub">A .service_num,</div>
+							<div class="query-sub">A .ppn,</div>
+							<div class="query-sub">A .term_payment,</div>
+							<div class="query-sub">A .tmp_term_payment,</div>
+							<div class="query-sub">A .billdate,</div>
+							<div class="query-sub">A .price_otc,</div>
+							<div class="query-sub">b.tibs_ppn,</div>
+							<div class="query-sub">b.tibs_term_payment,</div>
+							<div class="query-sub">b.tmp_tibs_term_payment,</div>
+							<div class="query-sub">c.billdate,</div>
+							<div class="query-sub">c.instalasi ,</div>
+							<div class="query-sub">c.abonemen</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">ods_ncx.s_order A,</div>
+							<div class="query-sub">dwh_sales.all_tibs_account_info b,</div>
+							<div class="query-sub">dwh_sales.all_tibs_order c</div>
+						</div>
+						<div class="query">
+							WHERE
+							<div class="query-sub">A .order_num = b.cust_order_num</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">A .service_num = b.product_label</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">A .order_num = c.cust_order_num</div>
+						</div>
+						<div class="query">
+							AND
+							<div class="query-sub">A .service_num = c.product_label</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">5. STEP FILTER (BILLDATE)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_filter_billdate')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_filter_billdate" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						CASE
+						WHEN ncx_billdate is null and tibs_billdate null then 'NOT COMPLY'
+						WHEN ncx_billdate = tibs_billdate then 'COMPLY'
+						end c_billdate</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							CASE
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_billdate IS NULL</div>
+							</div>
+							<div class="query">
+								AND
+								<div class="query-sub">tibs_billdate NULL THEN 'NOT COMPLY'</div>
+							</div>
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_billdate = tibs_billdate THEN 'COMPLY'</div>
+							</div>
+						</div>
+						<div class="query">
+							END
+							<div class="query-sub">c_billdate</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">6. STEP FILTER (TERM OF PAYMENT)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_filter_payment')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_filter_payment" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						CASE
+						WHEN ncx_billdate is null and tibs_billdate null then 'NOT COMPLY'
+						WHEN ncx_billdate = tibs_billdate then 'COMPLY'
+						end c_billdate</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							CASE
+							<div class="query">
+								WHEN
+								<div class="query-sub">(ncx_term_payment is null and tibs_term_payment is null)</div>
+							</div>
+							<div class="query">
+								OR
+								<div class="query-sub">(ncx_term_payment is not null and tibs_term_payment is null)</div>
+							</div>
+							<div class="query">
+								OR
+								<div class="query-sub">n(ncx_term_payment is null and tibs_term_payment is not null) then 'NOT COMPLY'</div>
+							</div>
+							<div class="query">
+								WHEN
+								<div class="query-sub">TMP_T CONTAINS TMP_T THEN 'COMPLY'</div>
+							</div>
+						</div>
+						<div class="query">
+							END
+							<div class="query-sub">c_term_payment</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">7. STEP FILTER (PPN)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_filter_ppn')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_filter_ppn" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT
+						CASE
+						WHEN ncx_ppn is null and tibs_ppn is null then 'NOT COMPLY'
+						WHEN ncx_ppn = tibs_ppn then 'COMPLY'
+						END c_ppn</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							CASE
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_ppn is null and tibs_ppn is null then 'NOT COMPLY'</div>
+							</div>
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_ppn = tibs_ppn then 'COMPLY'</div>
+							</div>
+						</div>
+						<div class="query">
+							END
+							<div class="query-sub">c_ppn</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">8. STEP FILTER (PRICE)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_filter_price')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_filter_price" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT 
+						CASE 
+						WHEN ncx_price_otc is null and ncx_price_rec is null and tibs_price_otc is null
+						and tibs_price_rec is null
+						then 'NOT COMPLY'
+						WHEN ncx_price_otc = tibs_price_otc and ncx_price_rec = tibs_price_rec then 'COMPLY'
+						end c_price</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							CASE
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_price_otc is null and ncx_price_rec is null and tibs_price_otc is null</div>
+							</div>
+							<div class="query">
+								WHEN
+								<div class="query-sub">tibs_price_rec is null then 'NOT COMPLY'</div>
+							</div>
+							<div class="query">
+								WHEN
+								<div class="query-sub">ncx_price_otc = tibs_price_otc and ncx_price_rec = tibs_price_rec then 'COMPLY'</div>
+							</div>
+						</div>
+						<div class="query">
+							END
+							<div class="query-sub">c_price</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">9. Step Merge Rows</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_merge')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_merge" style="border: white 1px solid;height: 1px;width: 1px;color: white;">Merge berdasarkan kolom order_num dan kolom service_num</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							MERGE
+							<div class="query-sub">berdasarkan kolom order_num dan kolom service_num</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="success-info" class="col-lg-12">
+					<label style="margin:30px 0px 15px 0px;">10. Step Table Output (Query menampilkan Data Mart)</label>
+					<button class="btn btn-xs btn-default pull-right" style="margin-top:30px" onclick="myFunction('view_source_mart')"><i class="fa fa-copy"></i> Copy To clipboard</button>
+					<textarea id="view_source_mart" style="border: white 1px solid;height: 1px;width: 1px;color: white;">SELECT * FROM DWH_SALES.F_ORDER_NCX_TIBS_ATTR</textarea>
+					<div class="col-lg-12" style="border: 1px solid lightgray;border-radius: 10px;background: #fbfbfb;padding: 10px;">
+						<div class="query">
+							SELECT
+							<div class="query-sub">*</div>
+						</div>
+						<div class="query">
+							FROM
+							<div class="query-sub">DWH_SALES.F_ORDER_NCX_TIBS_ATTR</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/demo.js"></script>
+<script>
+	$.ajax({
+			url:"<?php echo $this->basePath()?>/ncxtools/data/ncxtibsprice",  
+			type:"POST",
+			data : "",
+			success:function(datax){
+				if(datax.code == 0){
+					$.each(datax.data, function (i, item){
+						document.getElementById('all_tot').innerHTML = item.TOTAL;
+						document.getElementById('val_tot').innerHTML = item.VALID;
+						document.getElementById('not_tot').innerHTML = item.NOT_VALID;
+						
+						document.getElementById('all_per').innerHTML = (item.TOTAL_PERCENT)+" %";
+						document.getElementById('val_per').innerHTML = (item.VALID_PERCENT)+" %";
+						document.getElementById('not_per').innerHTML = (item.NOT_VALID_PERCENT)+" %";
+					});
+					
+					
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status);
+				alert(thrownError);
+			  }
+	   });
+	   
+	   $.ajax({
+			url:"<?php echo $this->basePath()?>/ncxtools/data/getcacustreflast",  
+			type:"POST",
+			data : {tabel:'f_order_ncx_tibs_attr'},
+			success:function(datax){
+				if(datax.code == 0){
+					$('#last_update').text(datax.data[0]['LAST_UPDATE']);				
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status);
+				alert(thrownError);
+			  }
+		});
+	   
+	   function view_code(){
+			$('#modal_query').modal();
+		}
+		
+		function myFunction(xxx) {
+		  /* Get the text field */
+		  console.log(xxx);
+		  var copyText = document.getElementById(xxx);
+
+		  /* Select the text field */
+		  copyText.select();
+
+		  /* Copy the text inside the text field */
+		  document.execCommand("copy");
+
+		  /* Alert the copied text */
+		  //alert("Copied the text: " + copyText.value);
+		} 
+</script>

@@ -1,0 +1,214 @@
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/AdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+   folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/adminlte/_all-skins.min.css">
+
+<style>
+	li .active {
+		background: #e7e7e7;
+	}
+	.content{
+		padding-bottom: 100px;
+	}
+	.glyphicon-refresh-animate {
+		-animation: spin .7s infinite linear;
+		-ms-animation: spin .7s infinite linear;
+		-webkit-animation: spinw .7s infinite linear;
+		-moz-animation: spinm .7s infinite linear;
+	}
+
+	@keyframes spin {
+		from { transform: scale(1) rotate(0deg);}
+		to { transform: scale(1) rotate(360deg);}
+	}
+	  
+	@-webkit-keyframes spinw {
+		from { -webkit-transform: rotate(0deg);}
+		to { -webkit-transform: rotate(360deg);}
+	}
+
+	@-moz-keyframes spinm {
+		from { -moz-transform: rotate(0deg);}
+		to { -moz-transform: rotate(360deg);}
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+	
+	.example2_processing{
+		border-color:white !important;
+	}
+	
+	.container{
+		width : 100%;
+	}
+	
+	.treeview{
+		padding : 0px 10px 0px 10px !important;
+	}
+	
+	.sidebar-menu li > a:hover {
+		//background-color:lightgray;
+		color:black;
+	}
+	
+	
+</style>
+<div class="row">
+	
+	<div class="col-md-12">
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="col-md-8"><b style="font-size:25px"> Rekon Master Detail</b> CA - Customer_ref </label></div>
+			<div class="col-md-4 pull-right" style="padding-top: 30px;color:white"></div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding: 15px;">
+		  <div class="col-md-3">
+				<aside class="main-sidebar" style="padding: 0px 15px 15px 15px; !important;min-width:315px;border-radius:5px">
+			<!-- sidebar: style can be found in sidebar.less -->
+				<section class="sidebar">
+				  <!-- /.search form -->
+				  <!-- sidebar menu: : style can be found in sidebar.less -->
+				  <ul class="sidebar-menu" style="padding: 0px; border:solid 1px #d9534f;min-height:550px;background: white;">
+					<li class="header" style="background-color:#d9534f;"><h3 style="padding-top : 0px;margin:0px;font-size:15px;"><b style="color:white">Hirarki Rekon</b></li>
+					<?php
+					$aa = explode('/',strtok($_SERVER["REQUEST_URI"],'?'));
+					$link = str_replace('detail','',str_replace('-detail','',$aa[3]));
+					foreach($this->menu_rekon as $row){
+						$active = "";
+						foreach($row['index'] as $temp){
+							if($temp == $link){
+								$active = "active";
+							}
+						}
+					?>
+						<li class="treeview <?php echo $active;?>">
+						  <a href="#">
+							<i class="fa <?php echo $row['ICON']; ?>"></i> <span><?php echo $row['NAME'];?></span>
+							<span class="pull-right-container">
+							  <i class="fa fa-angle-left pull-right"></i>
+							</span>
+						  </a>
+						  <?php if(!empty($row['detail'])){?>
+							  <ul class="treeview-menu">
+								<?php foreach($row['detail'] as $val){?>
+								<li style="white-space: normal;" <?php if($val['LINK'] == $link){echo $active = "class='active'";$nm_mnu=$val['NAME'];}?>>
+								  <a <?php if($val['LINK'] == $link){echo $active = "class='active'";}?> href="<?php if($val['LINK'] != '#' && $val['LINK'] != ''){$this->basePath()?>/ncxtools/tools/<?php echo $val['LINK'];}else{echo "#";}?>"><i class="fa fa-circle-o"></i> <?php echo $val['NAME']?>
+								  </a>
+								</li>
+								<?php }?>
+							  </ul>
+						  <?php }?>
+						</li>
+					<?php
+					}
+					?>
+				  </ul>
+				</section>
+				<!-- /.sidebar -->
+			  </aside>
+			</div>
+		  <div class="col-md-9" style="min-height:550px;margin: 0px;background: white;padding: 20px;border: 1px lightgray solid;border-radius: 5px;">
+				<table class="table table-hover table-strips" id="example2" style="margin-bottom:0px !important">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Date</th>
+							<th>Status Rekon</th>
+							<th>Status Download</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="body-content">
+
+					</tbody>
+				</table>
+		  </div>
+		  <div class="col-md-12" style="padding:15px 0px 0px 30px">
+			  <div id="kirim_toggle" style="display:none" class="pull-right">
+				<button id="send" class="btn btn-danger" type="button">Kirim</button>
+				<a class="btn btn-warning pull-left" href="<?php echo $this->basePath()?>/ncxtools/tools/bulktermin">Batal</a>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+	</form>
+	<div id="modal-success-save" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info"></div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo $this->basePath()?>/libraries/adminlte/demo.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.responsive.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.buttons.min.js"></script>
+<script>
+	$.ajax({
+		url: "<?php echo $this->basePath(); ?>/ncxtools/data/listDownload",
+		type: "POST",
+		data: {},
+		success: function(rs) {
+			if(rs.code == '0'){
+				$.each(rs.data, function(i, item){
+					var sts_rekon = item.rekon_status;
+					var ss = item.rekon_status;
+					if(item.rekon_status == null){
+						var sts_rekon = "All";
+						var ss = "";
+					}
+					
+					if(item.status_download == 0){
+						var sts = 'Waiting';
+						var link = '<button class="btn btn-warning">Waiting</button>';
+					}else if(item.status_download == 1){
+						var sts = 'On Process';
+						var link = '<button class="btn btn-warning">Waiting</button>';
+					}else{
+						var sts = "Success";
+						var link = '<a class="btn btn-success" href="<?php echo $this->basePath()?>/csv/'+item.rekon_table+'('+ss+').csv">Download</a>';
+					}
+					
+					
+					
+					
+					
+					
+					$('#body-content').append('<tr>'+
+						'<td>'+item.rekon_name+'</td>'+
+						'<td>'+item.rekon_date+'</td>'+
+						'<td>'+sts_rekon+'</td>'+
+						'<td>'+sts+'</td>'+
+						'<td>'+link+'</td>'+
+					'</tr>');
+				});
+				
+			}
+			$('#example2').dataTable();
+		}
+	});
+</script>

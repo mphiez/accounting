@@ -1,0 +1,222 @@
+<STYLE>
+	th{
+		font-size:11px;
+		color:white;
+		padding:auto;
+	}
+	
+	label {
+		font-weight : unset;
+		font-size : 11px;
+	}
+	
+	th{
+		text-align : center;
+		
+	}
+	
+	#example2_processing{
+		text-align : center !important;
+		border-color : white !important;
+	}
+	
+</STYLE>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/jquery.dataTables.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.responsive.js"></script>
+<script src="<?php echo $this->basePath(); ?>/libraries/datatables/dataTables.buttons.min.js"></script>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row">
+		  <div class="col-md-12">
+			<div class="col-md-12">
+				<div class="nav-tabs-custom">
+					<div class="tab-content">
+						<div class="row">
+							<div class="col-md-12">
+								<label><h3><?php echo $_GET['p_']?></h3></label>
+								<label style="font-size:12px;"> - <?php echo $_GET['s_']?></label>
+								<button class="btn btn-success pull-right" onclick="return download()">Download to Excel <i class="glyphicon glyphicon-file"></i></button>
+							</div>
+							<div class="col-md-12">
+								<table class="table table-strips table-hover table-bordered" id="example2">
+									<thead>
+										<tr STYLE="BACKGROUND-COLOR:RED;">
+											<th style="vertical-align: middle;">No</th>
+											<th>Order ID / Order Create By / Order Create Date / Product Name / Service Address / Product Type / Speed</th>
+											<th>Cust Account Num / Cust Name / Region / Witel / Segment / Nipnas / Bill Account / Bill Name / Account Nas / Service Name / Service Segment</th>
+											<th>LI MOnthly Price / LI OTC Price / LI Manual Discount / Curency / Handling Type / Vendor Name / Fullfilment Item Code /  Billing Type CD / Price Type CD</th>
+											<th style="vertical-align: middle;">Order Status / Order Status Type / LI Milestone</th>
+										</tr>
+									</thead>
+									<tbody id="content-table">
+										
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modal-listCustomer" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title modal-success">Link Item List</h4>
+	  </div>
+	  <div class="modal-body">
+		<div id="success-info">
+			<table class="table table-strips table-hover table-bordered">
+				<thead>
+					<tr STYLE="BACKGROUND-COLOR:RED;">
+						<th style="vertical-align: middle;">No</th>
+						<th>Order ID / Order Create By / Order Create Date / Product Name / Service Address / Product Type / Speed</th>
+						<th>Cust Account Num / Cust Name / Region / Witel / Segment / Nipnas / Bill Account / Bill Name / Account Nas / Service Name / Service Segment</th>
+						<th>LI MOnthly Price / LI OTC Price / LI Manual Discount / Curency / Handling Type / Vendor Name / Fullfilment Item Code /  Billing Type CD / Price Type CD</th>
+						<th style="vertical-align: middle;">Order Status / Order Status Type / LI Milestone</th>
+					</tr>
+				</thead>
+				<tbody id="detail_table">
+				</tbody>
+			</table>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<br>
+<br>
+</div>
+<script>
+	$('#example2').dataTable( {
+		"serverSide": true,
+		"processing": true,
+        "language": {
+            processing: '<span class="pull-center"><tr><td colspan="5" style="text-align : center;padding : 10px 0px;"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="35px" height="35px"></td></tr></span> '},
+		"ajax": {
+			"url": "<?php echo $this->basePath(); ?>/ncxtools/data/detail",
+			"type": 'POST',
+			"data" : {
+				t_:'<?php echo $_GET['t_']?>',//ogp, am, tenos (1 = ogp, 3 = am, 4 = quote, 2 = tenos)
+				f_:'<?php echo $_GET['f_']?>',//umur order berturut turut 
+				p_ : '<?php echo $_GET['p_']?>',//process atau am (t_ = 1 maka p_ = process, t_ = 3 maka p_ = am)
+				s_: '<?php echo $_GET['s_']?>',//subprocess
+				from:'<?php echo $_GET['from']?>',
+				to: '<?php echo $_GET['to']?>',
+				periode_create:'<?php echo $_GET['periode_create']?>',
+				order_type:'<?php echo $_GET['order_type']?>',
+				order_status:'<?php echo $_GET['order_status']?>',
+				divisi:'<?php echo $_GET['divisi']?>',
+				segmen:'<?php echo $_GET['segmen']?>',
+				am:'<?php echo $_GET['am']?>',
+				order_trans:'<?php echo $_GET['order_trans']?>',
+				umur_order:'<?php echo $_GET['umur_order']?>',
+				umur_status_order:'<?php echo $_GET['umur_status_order']?>',
+				vendor_name:'<?php echo $_GET['vendor_name']?>'
+			},
+		},
+		"columns": [
+			{ "data": "no" },
+			{
+			 sortable: true,
+				 "render": function ( data, type, full, meta ) {
+					 //console.log(full.header);
+					 var st = "";
+					 $.each(full.detail, function(i, item){
+						 st = '<label><b>ORDER ID : '+item.ORDER_ID+'</b></label><br><label>Create By : '+item.ORDER_CREATEDBY_NAME+'</label><br><label>Create Date : '+item.ORDER_CREATED_DATE+'<br><label>Product Name : '+item.PRODUCTNAME+'</label><br><label>Service Address : '+item.SERVICEADDRESS+'</label><br><label>Product Type : '+item.PRODUCTTYPE+'</label><br><label>Speed : '+item.SPEED+'</label>';
+					 });
+					 return "" + st + "";
+				 }
+			},
+			{
+			 sortable: true,
+				 "render": function ( data, type, full, meta ) {
+					 var st = "";
+					 $.each(full.detail, function(i, item){
+						st = '<label><b>CUSTOMER ACCOUNT : '+item.CUSTACCNTNUM+'</b></label><br><label><b>Customer Name : '+item.CUSTACCNTNAME+'</b></label><br><label>Region : '+item.CUST_REGION+'</label><br><label>Witel : '+item.WITEL_ALIAS+'</label><br><label>'+item.CUST_WITEL+'</label><br><label>Segment : '+item.CUST_SEGMEN+'</label><br><label><b>NIPNAS : </b>'+item.NIPNAS+'</label><br><label><b>BILLACCNUM  : </b>'+item.BILLACCNTNUM+'</label><br><label>Bill Acc Name : '+item.BILLACCNTNAME+'</label><br><label><b>ACCOUNTNAS : </b>'+item.ACCOUNTNAS+'</label><br><label>Service Name : '+item.SERVACCNTNAME+'</label><br><label>Service Segment : '+item.SERVICE_SEGMENT+'</label>';
+					 });
+					 return "" + st + "";
+				 }
+			},
+			{
+			 sortable: true,
+				 "render": function ( data, type, full, meta ) {
+					 
+					 var detailx = "";
+					 var  x = 0;
+					 $.each(full.detail, function(i, item){
+						x++;
+						if(x != 1){
+							detailx = detailx+"<br>"+'<br><label><b>LI Product Name : '+item.LI_PRODUCT_NAME+'</b></label><br><label>WO NUM : '+item.WONUM+'</label><br><label>Work Zone : '+item.WORKZONE+'</label><br><label>WO Class : '+item.WOCLASS+'</label><br><label>LI MOnthly Price : '+item.LI_MONTHLY_PRICE+'</label><br><label>LI OTC Price : '+item.LI_OTC_PRICE+'</label><br><label>LI Manual Discount : '+item.LI_MANUAL_DISCOUNT+'</label><br><label>Currency : '+item.CURRENCY+'</label><br><label>Handling Type : '+item.HANDLINGTYPE+'</label><br><label>Customer Segment : '+item.CUST_SEGMEN+'</label><br><label>Vendor Name : '+item.VENDOR_NAME+'</label><br><label>Fulfilment Item Code : '+item.FULFLMNT_ITEM_CODE+'</label><br><label>Billing Type CD: '+item.BILLING_TYPE_CD+'</label><br><label>Price Type CD : '+item.PRICE_TYPE_CD+'</label><br>';
+						 }
+					 });
+					 /* 
+					 VENDOR_NAME,
+					DWH_SALES.F_NCX_OGP_DETAIL.FULFLMNT_ITEM_CODE,
+					DWH_SALES.F_NCX_OGP_DETAIL.BILLING_TYPE_CD,
+					DWH_SALES.F_NCX_OGP_DETAIL.PRICE_TYPE_CD,
+					 
+					  */
+					 
+					 var st = "";
+					 var  x = 0;
+					 $.each(full.detail, function(i, item){
+						 x++;
+						if(x == 1){
+							st = '<label><b>LI Product Name : '+item.LI_PRODUCT_NAME+'</b></label><br><label>WO NUM : '+item.WONUM+'</label><br><label>Work Zone : '+item.WORKZONE+'</label><br><label>WO Class : '+item.WOCLASS+'</label><br><label>LI MOnthly Price : '+item.LI_MONTHLY_PRICE+'</label><br><label>LI OTC Price : '+item.LI_OTC_PRICE+'</label><br><label>LI Manual Discount : '+item.LI_MANUAL_DISCOUNT+'</label><br><label>Currency : '+item.CURRENCY+'</label><br><label>Handling Type : '+item.HANDLINGTYPE+'</label><br><label>Customer Segment : '+item.CUST_SEGMEN+'</label><br><label>Vendor Name : '+item.VENDOR_NAME+'</label><br><label>Fulfilment Item Code : '+item.FULFLMNT_ITEM_CODE+'</label><br><label>Billing Type CD: '+item.BILLING_TYPE_CD+'</label><br><label>Price Type CD : '+item.PRICE_TYPE_CD+'</label><br><button class="btn btn-xs btn-primary" onclick="return toggle_div(&#39;'+item.ORDER_ID+'&#39;)"><i class="glyphicon glyphicon-search"></i></button><div id="row_'+item.ORDER_ID+'" style="display:none">'+detailx+'</div>';
+						}
+					 });
+					 
+					 
+					 return "" + st + "";
+				 }
+			},
+			{
+			 sortable: true,
+				 "render": function ( data, type, full, meta ) {
+					 var st = "";
+					 $.each(full.detail, function(i, item){
+						st = '<label><b>Status : '+item.ORDER_STATUS+'</b></label><br><label>Sub Type : '+item.ORDER_SUBTYPE+'</label><br><label>Sub Process : '+item.LI_MILESTONE+'</label><br>';
+					 });
+					 return "" + st + "";
+				 }
+			}
+		],
+	} );
+	
+	function download(){
+		var data = "t_="+'<?php echo $_GET['t_'] == "" ? "" : $_GET['t_'];?>'+"&"+
+			"f_="+'<?php echo $_GET['f_'] == "" ? "" : $_GET['f_'];?>'+"&"+
+			"p_="+'<?php echo $_GET['p_'] == "" ? "" : $_GET['p_'];?>'+"&"+
+			"s_="+'<?php echo $_GET['s_'] == "" ? "" : $_GET['s_'];?>'+"&"+
+			"from="+'<?php echo $_GET['from'] == "" ? "" : $_GET['from'];?>'+"&"+
+			"to="+'<?php echo $_GET['to'] == "" ? "" : $_GET['to'];?>'+"&"+
+			"periode_create="+'<?php echo $_GET['periode_create'] == "" ? "" : $_GET['periode_create'];?>'+"&"+
+			"order_type="+'<?php echo $_GET['order_type'] == "" ? "" : $_GET['order_type'];?>'+"&"+
+			"order_status="+'<?php echo $_GET['order_status'] == "" ? "" : $_GET['order_status'];?>'+"&"+
+			"divisi="+'<?php echo $_GET['divisi'] == "" ? "" : $_GET['divisi'];?>'+"&"+
+			"segmen="+'<?php echo $_GET['segmen'] == "" ? "" : $_GET['segmen'];?>'+"&"+
+			"am="+'<?php echo $_GET['am'] == "" ? "" : $_GET['am'];?>'+"&"+
+			"order_trans="+'<?php echo $_GET['order_trans'] == "" ? "" : $_GET['order_trans'];?>'+"&"+
+			"umur_order="+'<?php echo $_GET['umur_order'] == "" ? "" : $_GET['umur_order'];?>'+"&"+
+			"umur_status_order="+'<?php echo $_GET['umur_status_order'] == "" ? "" : $_GET['umur_status_order'];?>'+"&"+
+			"vendor_name="+'<?php echo $_GET['vendor_name']== "" ? "" : $_GET['vendor_name'];?>';
+		window.open('<?php echo $this->basePath()?>/ncxtools/data/download?'+data,'_blank');
+	}
+	
+	function toggle_div(x){
+		//$('#modal-listCustomer').modal();
+		//$('.row_detail').hide();
+		//$('.det_'+x+'').toggle();
+		$('#row_'+x+'').toggle();
+	}
+</script>

@@ -1,0 +1,1941 @@
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/bootstrap-slider/slider.css">
+  <link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/bootstrap-slider/ion.rangeSlider.css">
+  <link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/bootstrap-slider/ion.rangeSlider.skinFlat.css">
+  <link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/bootstrap-slider/ion.rangeSlider.skinNice.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+  <script src="<?php echo $this->basePath()?>/libraries/bootstrap-slider/bootstrap-slider.js"></script>
+  <script src="<?php echo $this->basePath()?>/libraries/bootstrap-slider/ion.rangeSlider.min.js"></script>
+<style>
+	@media (min-width: 992px) {
+	  .modal-xl {
+		width: 80%;
+	  }
+	}
+	
+	
+	#am_active, #ogp_active{
+		cursor : pointer;
+	}
+	
+	.multiselect-container{
+		max-height : 400px;
+		overflow : scroll;
+	}
+	
+	.table > tbody > tr > td{
+		cursor : pointer;
+	}
+	
+	.table > tbody > tr > td :hover{
+		color:blue;
+	}
+	
+	.table > tbody > tr > td :hover{
+		color:blue;
+		ackground-color:red;
+	}
+
+	.content{
+		padding-bottom: 100px;
+	}
+	label{
+		font-weight: unset !important;
+	}
+	
+	.nav-tabs > li.active > a{
+		background-color : #d9534f;
+		color: #F9F4F4;
+	}
+	
+	.nav-tabs > li.active > a:hover{
+		background-color : #d9534f;
+		color: #F9F4F4;
+	}
+	
+	th, td {
+		border: 0.5px solid lightgray;
+		font-size : 11px;
+	}
+	
+	
+	
+	table {
+		border: 1px solid lightgray;
+	}
+	
+	.row > label, .list-group-item > label {
+		font-size : 11px;
+	}
+	
+	option{
+		font-size : 11px;
+	}
+	
+	.form-control{
+		font-size : 12px;
+		height: 25px;
+		padding: 0px 0px 0px 6px;
+		max-width: 90px;
+	}
+	.dropx{
+		position: absolute;
+		top: 100%;
+		display : none;
+		left: 0;
+		z-index: 1000;
+		float: left;
+		min-width: 160px;
+		margin: 2px 0 0;
+		font-size: 14px;
+		text-align: left;
+		list-style: none;
+		background-color: #fff;
+		-webkit-background-clip: padding-box;
+		background-clip: padding-box;
+		border: 1px solid #ccc;
+		border: 1px solid rgba(0,0,0,.15);
+		border-radius: 4px;
+		-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+		box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	}
+	
+	.form-group {
+		margin-bottom: 0px;
+	}
+	
+	.list-group-item{
+		border: none;
+		padding: 10px 5px;
+		max-width: 100px;
+	};
+	
+	
+	.btn-group > button {
+		padding : 0px 5px 0px 5px;
+	}
+	
+	select {
+		max-width:150px;
+	}
+	
+	.irs-from{
+		display : none;
+	}
+	
+	.irs-to{
+		display : none;
+	}
+	
+	.irs-min{
+		display : none;
+	}
+	
+	.irs-max{
+		display : none;
+	}
+	
+	.irs-single{
+		display : none;
+	}
+	
+	.multiselect-search{
+		padding: 10px;
+		height: auto;
+		width: 150px;
+		min-width: 150px;
+	}
+	
+	.input-group-addon{
+		display : none;
+	}
+	
+	.input-group-btn{
+		display : none;
+	}
+	
+	.navbar-right .form-group .form-control {
+		padding: 6px;
+		height: auto;
+		width: 150px;
+		min-width: 150px;
+	}
+	
+	.filter .input-group{
+		margin : auto;
+	}
+	
+	.container{
+		width : 100%;
+	}
+	
+	.nav-tabs{
+		margin-bottom : 10px;
+	}
+	
+	#ogp_spiner, #am_spiner, #quote_spiner, #tenos_spiner{
+		text-align : center;
+		padding : 10px 0px;
+	}
+	
+	tfoot > tr > td {
+		font-size : 15px;
+		border: 1px solid lightgray;
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <div class="row">
+		  <div class="col-md-12">
+			<div class="col-md-12">
+				<div class="nav-tabs-custom">
+					<div class="tab-content">
+						<ul class="nav nav-tabs">
+						  <li class="active" id="ogp_active" onclick="return clicke('ogp')"><a href="#activity" data-toggle="tab">NCX OGP DASHBOARD</a></li>
+						  <li id="am_active" onclick="return clicke('am')"><a href="#education" data-toggle="tab">NCX OGP DASHBOARD AM</a></li>
+						  <!--<li onclick="return clicke()"><a href="#experience" data-toggle="tab">NCX_WFM_TENOSS</a></li>-->
+						</ul>
+						  <!-- /.tab-pane -->
+						  <input 	type="text" style="display:none" id="test" value="0">
+						  <div class="tab-pane active" id="activity">
+						  <div class="col-md-12">
+							<div id="ogp_spiner">
+								<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="35px" height="35px">
+							</div>
+							<ul class="nav navbar-nav" id="ogp_spiner_li">
+								<li class="dropdown">
+									<ul class="nav navbar-nav" id="dropx" style="position: relative;">
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 20px;">CREATED</div>
+											<input style="width:80px;height:25px;" type="text" id="ogp_from" onchange="return load_ogp()" class="form-control form-control-xs" value="">
+											
+										</li>
+										<li class="list-group-item" style="padding: 38px 0px 0px 0px;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">S/d</div>
+										</li>
+										<li class="list-group-item" style="padding-top: 30px;">
+											<input style="width:80px;height:25px;" type="text" id="ogp_to" onchange="return load_ogp()" class="form-control form-control-xs" style="float:left" value="">
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">PERIODE CREATED</div>
+											<select multiple="multiple" class="form-control" id="periode_create" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TYPE</div>
+											<select multiple="multiple" class="form-control" id="order_type" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER STATUS</div>
+											<select multiple="multiple" class="form-control" id="order_status" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">DIVISI</div>
+											<select multiple="multiple" class="form-control" id="divisi" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">SEGMEN</div>
+											<select multiple="multiple" class="form-control" id="segmen" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">AM</div>
+											<select multiple="multiple" class="form-control" id="am" onchange="return load_ogp()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER</div>
+											<select multiple="multiple" class="form-control" id="umur_order" onchange="return load_ogp()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER STATUS</div>
+											<select multiple="multiple" class="form-control" id="umur_status_order" onchange="return load_ogp()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TRANS</div>
+											<select multiple="multiple" class="form-control" id="order_trans" onchange="return load_ogp()">
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">VENDOR NAME</div>
+											<select multiple="multiple" class="form-control" id="vendor_name" onchange="return load_ogp()">
+											</select>
+										</li>
+										<li class="list-group-item" style="width:120px !important;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UPDATED DATE</div>
+											<div class="ssss"><b id="ogp_updated_date"></b></div>
+										</li>
+										<div class="sasasa" style="position: absolute;    bottom: 8px;    left: 0;    width: 180px;    height: 30px;    border: 1px #73AD21;"><input id="range_1" type="text" name="range_1" value="" onchange="return show(1)"></div>
+									</ul>
+								</li>
+							</ul>
+						  </div>
+						  <div class="col-md-12" style="padding:0px;">
+						  <div style="overflow-x: auto;    white-space: nowrap;">
+							<table class="table table-hover table-strips" id="example2">
+								<thead>
+									<tr>
+										<th width="10%" ROWSPAN="2" STYLE="TEXT-ALIGN:CENTER;background-color:gray;color:white">PROCESS</th>
+										<th width="10%" ROWSPAN="2" STYLE="TEXT-ALIGN:CENTER;background-color:gray;color:white;">ORDER SUBPROCESS</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;">DBS</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;">DES</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;">DGS</th>
+										<th ROWSPAN="2" width="4%" STYLE="TEXT-ALIGN:CENTER;background-color:#ed8080;">GRAND TOTAL</th>
+									</tr>
+									<tr>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;" width="3%">> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;" width="3%">TOTAL</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">TOTAL</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">TOTAL</th>
+									</tr>
+								</thead>
+								<tbody id="ogp">
+									
+								</tbody>
+								<tfoot id="ogp_foot">
+									<tr>
+										<td style="padding: 15px 0px" colspan="15">
+											<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="25px" height="25px"> Loading . . .
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+							
+							</div>
+							</div>
+							<div>
+							<div class="col-md-12">
+							<LABEL style="font-weight: 700 !important;float: left;font-size: 20px;">QUOTE</LABEL>
+							</div>
+							<div class="col-md-12">
+								<div id="quote_spiner">
+									<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="35px" height="35px">
+								</div>
+								<ul class="nav navbar-nav" id="quote_spiner_li">
+									<li class="list-group-item">
+										<div class="ssss" style="font-size: 11px;height: 23px;">CREATED</div>
+										<input style="width:80px;height:25px;" onchange="return load_quote()" onkeypress="return load_quote()" type="text" id="quote_from" class="form-control form-control-xs" value="">
+									</li>
+									<li class="list-group-item" style="padding: 38px 0px 0px 0px;">
+										<div class="ssss" style="font-size: 11px;height: 35px;">S/d</div>
+									</li>
+									<li class="list-group-item" style="padding-top: 33px;">
+										<input style="width:80px;height:25px;" onchange="return load_quote()" onkeypress="return load_quote()" type="text"  id="quote_to" class="form-control form-control-xs" style="float:left" value="">
+									</li>
+									<li class="list-group-item">
+										<div class="ssss" style="font-size: 11px;height: 30px;">STATUS QUOTE</div>
+										<select multiple="multiple" class="form-control" onchange="return load_quote()" id="status_quote">
+											
+										</select>
+									</li>
+									<li class="list-group-item">
+										<div class="ssss" style="font-size: 11px;height: 30px;">UMUR QUOTE</div>
+										<select multiple="multiple" class="form-control" onchange="return load_quote()" id="umur_quote">
+											
+											<option value="0 - 7 Hari">0 - 7 Hari</option>
+											<option value="7 - 15 Hari">7 - 15 Hari</option>
+											<option value="> 15 Hari">> 15 Hari</option>
+										</select>
+									</li>
+									<li class="list-group-item">
+										<div class="ssss" style="font-size: 11px;height: 30px;">UMUR STATUS QUOTE</div>
+										<select multiple="multiple" class="form-control" onchange="return load_quote()" id="umur_status_quote">
+											
+											<option value="0 - 7 Hari">0 - 7 Hari</option>
+											<option value="7 - 15 Hari">7 - 15 Hari</option>
+											<option value="> 15 Hari">> 15 Hari</option>
+										</select>
+									</li>
+									<div class="sasasa" style="position: absolute;    bottom: 8px;    left: 22px;    width: 180px;    height: 30px;    border: 1px #73AD21;"><input id="range_2" type="text" name="range_2" onchange="return show(2)" value=""></div>
+								</ul>
+							</div>
+							<table class="table table-hover table-strips" id="example2">
+								<thead>
+									<tr>
+										<th ROWSPAN="1" STYLE="TEXT-ALIGN:CENTER;background-color:gray;color:white;;background-color:gray;color:white;">STAT_CD</th>
+										<th ROWSPAN="1" STYLE="TEXT-ALIGN:CENTER;background-color:#efbb73;color:white;">DBS</th>
+										<th ROWSPAN="1" STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;color:white;">DES</th>
+										<th ROWSPAN="1" STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;color:white;">DGS</th>
+										<th ROWSPAN="1" STYLE="TEXT-ALIGN:CENTER;background-color:#ed8080;color:white;">GRAND TOTAL</th>
+									</tr>
+								</thead>
+								<tbody id="qoute">
+									
+								</tbody>
+								<tfoot id="quote_foot">
+									<tr>
+										<td style="padding: 15px 0px" colspan="5">
+											<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="25px" height="25px"> Loading . . . 
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+							
+						  </div>
+						  </div>
+						  <!-- /.tab-pane -->
+						  <div class="tab-pane" id="education" style="overflow-x: auto;    white-space: nowrap;">
+							<div class="col-md-12">
+							<ul class="nav navbar-nav">
+								<div id="am_spiner">
+									<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="35px" height="35px">
+								</div>
+								<li class="dropdown" id="am_spiner_li">
+									<ul class="nav navbar-nav" id="dropx">
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 20px;">CREATED</div>
+											<input style="width:80px;height:25px;" type="text" id="am_ogp_from" onchange="return load_am()" class="form-control form-control-xs" value="">
+										</li>
+										<li class="list-group-item" style="padding: 38px 0px 0px 0px;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">S/d</div>
+										</li>
+										<li class="list-group-item" style="padding-top: 30px;">
+											<input style="width:80px;height:25px;" type="text" id="am_ogp_to" onchange="return load_am()" class="form-control form-control-xs" style="float:left" value="">
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">PERIODE CREATED</div>
+											<select multiple="multiple" class="form-control" id="am_periode_create" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TYPE</div>
+											<select multiple="multiple" class="form-control" id="am_order_type" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER STATUS</div>
+											<select multiple="multiple" class="form-control" id="am_order_status" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">DIVISI</div>
+											<select multiple="multiple" class="form-control" id="am_divisi" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">SEGMEN</div>
+											<select multiple="multiple" class="form-control" id="am_segmen" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">AM</div>
+											<select multiple="multiple" class="form-control" id="am_am" onchange="return load_am()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER</div>
+											<select multiple="multiple" class="form-control" id="am_umur_order" onchange="return load_am()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER <br>STATUS</div>
+											<select multiple="multiple" class="form-control" id="am_umur_status_order" onchange="return load_am()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TRANS</div>
+											<select multiple="multiple" class="form-control" id="am_order_trans" onchange="return load_am()">
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">VENDOR NAME</div>
+											<select multiple="multiple" class="form-control" id="am_vendor_name" onchange="return load_am()">
+											</select>
+										</li>
+										<li class="list-group-item" style="width:120px !important;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UPDATED DATE</div>
+											<div class="ssss"><b id="am_updated_date"></b></div>
+										</li>
+										<div class="sasasa" style="position: absolute;    bottom: 8px;    left: 0;    width: 180px;    height: 30px;    border: 1px #73AD21;"><input id="range_3" type="text" name="range_3" value="" onchange="return show(3)"></div>
+									</ul>
+								</li>
+							</ul>
+						  </div>
+								<table class="table table-hover table-strips" id="example">
+								<thead>
+										<th width="10%" ROWSPAN="2" STYLE="TEXT-ALIGN:CENTER;background-color:gray;color:white;">AM NAME</th>
+										<th width="10%" ROWSPAN="2" STYLE="TEXT-ALIGN:CENTER;background-color:gray;color:white;">PROCESS</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;">DBS</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;">DES</th>
+										<th COLSPAN="4" STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;">DGS</th>
+										<th ROWSPAN="2" width="4%" STYLE="TEXT-ALIGN:CENTER;background-color:#ed8080;">GRAND TOTAL</th>
+									</tr>
+									<tr>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;" width="3%"> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;" width="3%">TOTAL</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" width="3%">TOTAL</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">0-7 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">7-15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">> 15 <br> HARI</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;" width="3%">TOTAL</th>
+									</tr>
+								</thead>
+								<tbody id="am_table">
+									
+								</tbody>
+								<tfoot >
+									<tr id="am_foot">
+										<td style="padding: 15px 0px" colspan="15">
+											<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="25px" height="25px"> Loading . . . 
+										</td>
+									</tr>
+									<tr id="am_foot_init">
+										<td style="padding: 15px 0px" colspan="15">
+											 Silahkan lakukan filtering!
+										</td>
+									</tr>
+								</tfoot>
+								<!-- <tfoot id="am_foot_init">
+									<tr>
+										<td style="padding: 15px 0px" colspan="15">
+											<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="25px" height="25px"> Silahkan lakukan filtering
+										</td>
+									</tr>
+								</tfoot> -->
+								
+							</table>
+						  </div>
+						  <!-- /.tab-pane -->
+
+						  <div class="tab-pane" id="experience" style="overflow-x: auto;    white-space: nowrap;">
+							<div class="col-md-12">
+								<div id="tenos_spiner">
+									<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="35px" height="35px">
+								</div>
+								<ul class="nav navbar-nav" id="tenos_spiner_li">
+								<li class="dropdown">
+									<ul class="nav navbar-nav" id="dropx" style="position: relative;">
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 20px;">CREATED</div>
+											<input style="width:80px;height:25px;" type="text" id="tenos_from" onchange="return load_tenos()" class="form-control form-control-xs" value="">
+											
+										</li>
+										<li class="list-group-item" style="padding: 38px 0px 0px 0px;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">S/d</div>
+										</li>
+										<li class="list-group-item" style="padding-top: 30px;">
+											<input style="width:80px;height:25px;" type="text" id="tenos_to" onchange="return load_tenos()" class="form-control form-control-xs" style="float:left" value="">
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">PERIODE CREATED</div>
+											<select multiple="multiple" class="form-control" id="tenos_periode_create" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TYPE</div>
+											<select multiple="multiple" class="form-control" id="tenos_order_type" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER STATUS</div>
+											<select multiple="multiple" class="form-control" id="tenos_order_status" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">DIVISI</div>
+											<select multiple="multiple" class="form-control" id="tenos_divisi" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">SEGMEN</div>
+											<select multiple="multiple" class="form-control" id="tenos_segmen" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">AM</div>
+											<select multiple="multiple" class="form-control" id="tenos_am" onchange="return load_tenos()">
+												
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER</div>
+											<select multiple="multiple" class="form-control" id="tenos_umur_order" onchange="return load_tenos()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UMUR ORDER STATUS</div>
+											<select multiple="multiple" class="form-control" id="tenos_umur_status_order" onchange="return load_tenos()">
+												
+												<option value="0 - 7 Hari">0 - 7 Hari</option>
+												<option value="7 - 15 Hari">7 - 15 Hari</option>
+												<option value="> 15 Hari">> 15 Hari</option>
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">ORDER TRANS</div>
+											<select multiple="multiple" class="form-control" id="tenos_order_trans" onchange="return load_tenos()">
+											</select>
+										</li>
+										<li class="list-group-item">
+											<div class="ssss" style="font-size: 11px;height: 30px;">VENDOR NAME</div>
+											<select multiple="multiple" class="form-control" id="tenos_vendor_name" onchange="return load_tenos()">
+											</select>
+										</li>
+										<li class="list-group-item" style="width:120px !important;">
+											<div class="ssss" style="font-size: 11px;height: 30px;">UPDATED DATE</div>
+											<div class="ssss"><b id="tenos_updated_date"></b></div>
+										</li>
+										<div class="sasasa" style="position: absolute;    bottom: 8px;    left: 0;    width: 180px;    height: 30px;    border: 1px #73AD21;"><input id="range_4" type="text" name="range_4" value="" onchange="return show(4)"></div>
+									</ul>
+								</li>
+							</ul>
+							</div>
+							<table class="table table-hover table-strips" id="example3">
+								<thead>
+									<tr>
+										<th ROWSPAN="2" style="background-color:gray;text-align:center;color:white;">PROCESS NX</th>
+										<th ROWSPAN="2" style="background-color:gray;text-align:center;color:white;">SUBPROCESS NCX WFM</th>
+										<th COLSPAN="4" style="background-color:gray;text-align:center;color:white;">CUST_DIVISI</th>
+									</tr>
+									<tr>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ef9c28;">DES</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightgreen;" >DBS</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:lightblue;">DGS</th>
+										<th STYLE="TEXT-ALIGN:CENTER;background-color:#ed8080;">GRAND TOTAL</th>
+									</tr>
+								</thead>
+								<tbody id="tenos">
+									
+								</tbody>
+								<tfoot id="tenos_foot">
+									<tr>
+										<td style="padding: 15px 0px" colspan="5">
+											<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="25px" height="25px"> Loading . . . 
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						  </div>
+					</div>
+				</div>
+			</div>
+		  </div>
+	  </div>
+	</div>
+	<div class="col-md-12">
+	  <div id="container"></div>
+	</div>
+	<div id="modal-detail" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>Order</th>
+						<th>Account</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>CUSTACCNUM<BR>4792929<BR>CUSTACCNAME<BR>FASTFOOD INDONESIA<BR>CUST_REGION<BR>REGION 2<BR>CUST_WITEL<BR>KW JAKARTA PUSAT<BR></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div id="modal-update" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Pemberitahuan</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-update">
+				
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</div>
+
+<script>	
+
+	function show(x){
+		var temp = $('#range_'+x).val();
+		var temp2 = temp.split(';');
+		
+		var singledate = "/Date("+temp2[0]+")/";
+		var changeddate = singledate.match(/\d+/g).map(function (s) { return new Date(+s); });
+		var date = new Date(changeddate);
+		var mnth = ("0" + (date.getMonth() + 1)).slice(-2);
+		var day = ("0" + date.getDate()).slice(-2);
+		var ddmmyyyFromateDate = [day, mnth,date.getFullYear()].join("-");
+		
+		
+		
+		var singledate = "/Date("+temp2[1]+")/";
+		var changeddate = singledate.match(/\d+/g).map(function (s) { return new Date(+s); });
+		var date = new Date(changeddate);
+		var mnth = ("0" + (date.getMonth() + 1)).slice(-2);
+		var day = ("0" + date.getDate()).slice(-2);
+		var ddmmyyyFromateDate2 = [day, mnth,date.getFullYear()].join("-");
+		
+		console.log(x);
+		
+		if(x == 1){
+			$('#ogp_from').val(ddmmyyyFromateDate);
+			$('#ogp_to').val(ddmmyyyFromateDate2);
+			load_ogp();
+		}else if(x == 2){
+			$('#quote_from').val(ddmmyyyFromateDate);
+			$('#quote_to').val(ddmmyyyFromateDate2);
+			load_quote();
+		}else if(x == 3){
+			$('#am_ogp_from').val(ddmmyyyFromateDate);
+			$('#am_ogp_to').val(ddmmyyyFromateDate2);
+			load_am();
+		}else{
+			$('#tenos_from').val(ddmmyyyFromateDate);
+			$('#tenos_to').val(ddmmyyyFromateDate2);
+			load_tenos();
+		}
+		
+	}
+
+   function clicke(x){
+			document.getElementById('test').style.display="";
+			document.getElementById('test').focus();
+			document.getElementById('test').style.display="none";
+			/* $("#ogp_active").removeClass("active");
+			$("#am_active").removeClass("active");
+			$("#"+x+"_active").addClass("active"); */
+			
+			document.getElementById('am_table').innerHTML = "";
+			document.getElementById('am_foot').style.display = "none";
+			//document.getElementById('am_foot_init').style.display = "block";
+			//$('#modal-update').modal();
+			//document.getElementById('success-update').innerHTML = 'Silahkan lakukan filtering';
+
+			console.log(x);
+			if(x == 'am' && $('#test').val() == 0){
+				//document.getElementById('am_table').innerHTML = "";
+				//document.getElementById('am_foot').style.display = '';
+				$('#test').val(1);
+				//load_am();
+			}
+		};
+	
+	
+	
+	
+	
+	
+	function load_ogp(){
+		document.getElementById('ogp').innerHTML = "";
+		document.getElementById('ogp_foot').style.display = '';
+		
+		var data = {
+			"from" : $('#ogp_from').val(),
+			"to" : $('#ogp_to').val(),
+			"periode_create" : $('#periode_create').val(),
+			"order_type" : $('#order_type').val(),
+			"order_status" : $('#order_status').val(),
+			"divisi" : $('#divisi').val(),
+			"segmen" : $('#segmen').val(),
+			"am" : $('#am').val(),
+			"order_trans" : $('#order_trans').val(),
+			"umur_order" : $('#umur_order').val(),
+			"umur_status_order" : $('#umur_status_order').val(),
+			"vendor_name" : $('#vendor_name').val(),
+		}
+		
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/load-ogp',
+			type: "POST",
+			data: {data : data},
+			success: function(datax) {
+				document.getElementById('ogp_foot').style.display = 'none';
+				if(datax.code == 0){
+					var row1 = 0;
+					var row2 = 0;
+					var row3 = 0;
+					var row4 = 0;
+					var row5 = 0;
+					var row6 = 0;
+					var row7 = 0;
+					var row8 = 0;
+					var row9 = 0;
+					var row10 = 0;
+					var row11 = 0;
+					var row12 = 0;
+					var row13 = 0;
+					var row14 = 0;
+					var xxx = 'sasa';
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS != null){
+							if(item.PROCESS != xxx){
+								$('#ogp').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(1,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(1,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(1,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(1,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(1,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}else{
+								$('#ogp').append('<tr>'+
+									'<td style="background-color:lightgray"></td>'+
+									'<td style="background-color:white;" onclick="return view(1,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(1,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(1,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(1,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+							xxx = item.PROCESS;
+						}
+					});
+					
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS == null){
+							$('#ogp').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(1,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(1,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(1,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(1,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(1,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(1,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+						});
+						
+						$('#ogp').append('<tr>'+
+						'<td colspan="2" style="background-color:gray; color:white;font-weight:100px">GRAND TOTAL</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row1+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row2+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row3+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row4+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row5+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row6+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row7+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row8+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row9+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row10+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row11+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row12+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row13+'</td>'+
+						'</tr>');
+					}
+					//$('#example2').dataTable();
+				}
+		});
+	}
+	
+	
+	
+	function load_tenos(){
+		document.getElementById('tenos').innerHTML = "";
+		document.getElementById('tenos_foot').style.display = '';
+		
+		var data = {
+			"from" : $('#tenos_from').val(),
+			"to" : $('#tenos_to').val(),
+			"periode_create" : $('#tenos_periode_create').val(),
+			"order_type" : $('#tenos_order_type').val(),
+			"order_status" : $('#tenos_order_status').val(),
+			"divisi" : $('#tenos_divisi').val(),
+			"segmen" : $('#tenos_segmen').val(),
+			"am" : $('#tenos_am').val(),
+			"umur_order" : $('#tenos_umur_order').val(),
+			"order_trans" : $('#tenos_order_trans').val(),
+			"umur_status_order" : $('#tenos_umur_status_order').val(),
+			"vendor_name" : $('#tenos_vendor_name').val(),
+		}
+		
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/load-ogp',
+			type: "POST",
+			data: {data : data},
+			success: function(datax) {
+				document.getElementById('am_foot').style.display = 'none';
+				if(datax.code == 0){
+					var row1 = 0;
+					var row2 = 0;
+					var row3 = 0;
+					var row4 = 0;
+					var row5 = 0;
+					var row6 = 0;
+					var row7 = 0;
+					var row8 = 0;
+					var row9 = 0;
+					var row10 = 0;
+					var row11 = 0;
+					var row12 = 0;
+					var row13 = 0;
+					var row14 = 0;
+					var xxx = 'sasa';
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS != null){
+							if(item.PROCESS != xxx){
+								$('#tenos').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(2,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(2,2,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(2,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(2,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(2,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}else{
+								$('#tenos').append('<tr>'+
+									'<td style="background-color:lightgray"></td>'+
+									'<td style="background-color:white;" onclick="return view(2,2,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(2,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(2,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(2,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+							xxx = item.PROCESS;
+						}
+					});
+					
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS == null){
+							$('#tenos').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(2,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(2,2,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(2,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(2,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(2,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+						});
+						
+						$('#tenos').append('<tr>'+
+						'<td colspan="2" style="background-color:gray; color:white;font-weight:100px">GRAND TOTAL</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row4+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row8+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row12+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row13+'</td>'+
+						'</tr>');
+					}
+					//$('#example2').dataTable();
+				}
+		});
+	}
+	
+	function load_am(){
+		document.getElementById('am_table').innerHTML = "";
+		document.getElementById('am_foot').style.display = '';
+		document.getElementById('am_foot_init').style.display = '';
+
+		
+		var data = {
+			"from" : $('#am_ogp_from').val(),
+			"to" : $('#am_ogp_to').val(),
+			"periode_create" : $('#am_periode_create').val(),
+			"order_type" : $('#am_order_type').val(),
+			"order_status" : $('#am_order_status').val(),
+			"divisi" : $('#am_divisi').val(),
+			"segmen" : $('#am_segmen').val(),
+			"am" : $('#am_am').val(),
+			"umur_order" : $('#am_umur_order').val(),
+			"order_trans" : $('#am_order_trans').val(),
+			"umur_status_order" : $('#am_umur_status_order').val(),
+			"vendor_name" : $('#am_vendor_name').val(),
+		}
+		
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/load-am',
+			type: "POST",
+			data: {data : data},
+			success: function(datax) {
+				document.getElementById('am_foot').style.display = 'none';
+				document.getElementById('am_foot_init').style.display = 'none';
+				if(datax.code == 0){
+					var row1 = 0;
+					var row2 = 0;
+					var row3 = 0;
+					var row4 = 0;
+					var row5 = 0;
+					var row6 = 0;
+					var row7 = 0;
+					var row8 = 0;
+					var row9 = 0;
+					var row10 = 0;
+					var row11 = 0;
+					var row12 = 0;
+					var row13 = 0;
+					var row14 = 0;
+					var xxx = 'sasa';
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS != null){
+							if(item.PROCESS != xxx){
+								$('#am_table').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(3,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(3,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(3,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(3,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(3,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}else{
+								$('#am_table').append('<tr>'+
+									'<td style="background-color:lightgray"></td>'+
+									'<td style="background-color:white;" onclick="return view(3,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(3,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(3,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(3,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+							xxx = item.PROCESS;
+						}
+					});
+					
+					$.each(datax.data, function(i, item){
+						if(item.PROCESS == null){
+							$('#am_table').append('<tr>'+
+									'<td style="background-color:lightgray" onclick="return view(3,1,&#39;'+item.PROCESS+'&#39;,&#39;&#39;)"><b>'+item.PROCESS+'</td>'+
+									'<td style="background-color:white;" onclick="return view(3,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.ORDER_SUBPROCESS+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,5,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DBS_16+'</td>'+
+									'<td style="background-color:#ef9c28;text-align:center;color:white;" onclick="return view(3,6,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DBS_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,7,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,8,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,9,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DES_16+'</td>'+
+									'<td style="background-color:#3bf75b;text-align:center;color:white;" onclick="return view(3,10,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DES_TOTAL+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,11,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_7+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,12,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_15+'</td>'+
+									'<td style="background-color:#white;text-align:center;" onclick="return view(3,13,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)">'+item.DGS_16+'</td>'+
+									'<td style="background-color:#4089ef;text-align:center;color:white;" onclick="return view(3,14,&#39;'+item.PROCESS+'&#39;,&#39;'+item.ORDER_SUBPROCESS+'&#39;)"><b>'+item.DGS_TOTAL+'</td>'+
+									'<td style="background-color:#ed5555;text-align:center;color:white;"><b>'+(item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1)+'</td>'+
+								'</tr>');
+								row1 = row1 +(item.DBS_7 * 1);
+								row2 = row2 +(item.DBS_15 * 1);
+								row3 = row3 +(item.DBS_16 * 1);
+								row4 = row4 +(item.DBS_TOTAL * 1);
+								row5 = row5 +(item.DES_7 * 1);
+								row6 = row6 +(item.DES_15 * 1);
+								row7 = row7 +(item.DES_16 * 1);
+								row8 = row8 +(item.DES_TOTAL * 1);
+								row9 = row9 +(item.DGS_7 * 1);
+								row10 = row10 +(item.DGS_15 * 1);
+								row11 = row11 +(item.DGS_16 * 1);
+								row12 = row12 +(item.DGS_TOTAL * 1);
+								row13 = row13 +((item.DBS_TOTAL * 1 +item.DES_TOTAL * 1 +item.DGS_TOTAL * 1) * 1);
+							}
+						});
+						
+						$('#am_table').append('<tr>'+
+						'<td colspan="2" style="background-color:gray; color:white;font-weight:100px">GRAND TOTAL</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row1+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row2+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row3+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row4+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row5+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row6+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row7+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row8+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row9+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row10+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row11+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row12+'</td>'+
+						'<td style="background-color:gray; color:white;font-weight:100px;text-align:center"><b>'+row13+'</td>'+
+						'</tr>');
+					}
+				}
+		});
+	}
+	
+	function load_quote(){
+		
+		document.getElementById('quote_foot').style.display = '';
+		
+		var data = {
+			"from" : $('#quote_from').val(),
+			"to" : $('#quote_to').val(),
+			"status_quote" : $('#status_quote').val(),
+			"umur_quote" : $('#umur_quote').val(),
+			"umur_status_quote" : $('#umur_status_quote').val(),
+		}
+		
+		document.getElementById('qoute').innerHTML = "";
+		
+		$.ajax({
+				url: '<?php echo $this->basePath()?>/ncxtools/data/load-quote',
+				type: "POST",
+				data: {data},
+				success: function(datax) {
+					document.getElementById('quote_foot').style.display = 'none';
+					if(datax.code == 0){
+						var row1 = 0;
+						var row2 = 0;
+						var row3 = 0;
+						var row4 = 0;
+						$.each(datax.data, function(i, item){
+							$('#qoute').append('<tr>'+
+							'<td style="background-color:lightgray;" onclick="return view(4,1,&#39;'+item.STATUS_QUOTE+'&#39;,&#39;&#39;)"><b>'+item.STATUS_QUOTE+'</td>'+
+							'<td style="text-align:center;background-color:#ef9c28;color:white;" onclick="return view(4,2,&#39;'+item.PROCESS+'&#39;,&#39;'+item.STATUS_QUOTE+'&#39;)"><b>'+item.DBS+'</td>'+
+							'<td style="text-align:center;background-color:#3bf75b;color:white;" onclick="return view(4,3,&#39;'+item.PROCESS+'&#39;,&#39;'+item.STATUS_QUOTE+'&#39;)"><b>'+item.DCS+'</td>'+
+							'<td style="text-align:center;background-color:#4089ef;color:white;" onclick="return view(4,4,&#39;'+item.PROCESS+'&#39;,&#39;'+item.STATUS_QUOTE+'&#39;)"><b>'+item.DGS+'</td>'+
+							'<td style="text-align:center;background-color:#ed5555;color:white;"><b>'+(item.DGS*1 + item.DCS*1 + item.DBS*1)+'</td>'+
+							'</tr>');
+							row1 = row1 + (item.DBS*1);
+							row2 = row2 + (item.DCS*1);
+							row3 = row3 + (item.DGS*1);
+							row4 = row4 + (item.DGS*1 + item.DCS*1 + item.DBS*1);
+						});
+						
+						$('#qoute').append('<tr>'+
+							'<td style="background-color:gray;color:white;">GRAND TOTAL</td>'+
+							'<td style="text-align:center;background-color:gray;color:white;"><b>'+row1+'</td>'+
+							'<td style="text-align:center;background-color:gray;color:white;"><b>'+row2+'</td>'+
+							'<td style="text-align:center;background-color:gray;color:white;"><b>'+row3+'</td>'+
+							'<td style="text-align:center;background-color:gray;color:white;"><b>'+row4+'</td>'+
+							'</tr>');
+						
+					}
+				}
+		});
+	}
+	
+	$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/filter',
+			beforeSend: function( xhr ) {
+				document.getElementById('ogp_spiner_li').style.display = 'none';
+				document.getElementById('am_spiner_li').style.display = 'none';
+				document.getElementById('quote_spiner_li').style.display = 'none';
+				document.getElementById('tenos_spiner_li').style.display = 'none';
+			},
+			type: "POST",
+			data: {},
+			success: function(datax) {
+				if(datax.code == 0){
+					$.each(datax.data.minmax, function (i, item){
+						
+						$("#range_1").ionRangeSlider({
+							min: new Date(item.MIN).getTime(),
+							max: new Date(item.MAX).getTime(),
+							from: new Date(item.MIN).getTime(),
+							to: new Date(item.MAX).getTime(),
+							prettify: function(num) {
+								date = new Date(num);
+								return date.toISOString();
+							},
+							type: 'double',
+							step: 1,
+							//prettify: false,
+							hasGrid: true
+						});
+						
+						
+						$("#range_2").ionRangeSlider({
+							min: new Date(item.MIN).getTime(),
+							max: new Date(item.MAX).getTime(),
+							from: new Date(item.MIN).getTime(),
+							to: new Date(item.MAX).getTime(),
+							prettify: function(num) {
+								date = new Date(num);
+								return date.toISOString();
+							},
+							type: 'double',
+							step: 1,
+							//prettify: false,
+							hasGrid: true
+						});
+						
+						$("#range_3").ionRangeSlider({
+							min: new Date(item.MIN).getTime(),
+							max: new Date(item.MAX).getTime(),
+							from: new Date(item.MIN).getTime(),
+							to: new Date(item.MAX).getTime(),
+							prettify: function(num) {
+								date = new Date(num);
+								return date.toISOString();
+							},
+							type: 'double',
+							step: 1,
+							//prettify: false,
+							hasGrid: true
+						});
+						
+						
+						$("#range_4").ionRangeSlider({
+							min: new Date(item.MIN).getTime(),
+							max: new Date(item.MAX).getTime(),
+							from: new Date(item.MIN).getTime(),
+							to: new Date(item.MAX).getTime(),
+							prettify: function(num) {
+								date = new Date(num);
+								return date.toISOString();
+							},
+							type: 'double',
+							step: 1,
+							//prettify: false,
+							hasGrid: true
+						});
+					});
+					
+					var update_time = "";
+					$.each(datax.data.updated_date, function (i, item){
+						var update_time = item.UPDATED_DATE;
+					});
+					$('#ogp_updated_date').append('<option>'+datax.data.updated_date.UPDATED_DATE+"</option>");
+					$('#am_updated_date').append(datax.data.updated_date.UPDATED_DATE);
+					$('#tenos_updated_date').append(datax.data.updated_date.UPDATED_DATE);
+						
+						
+					//ogp
+					$.each(datax.data.periode_create, function (i, item){
+						$('#periode_create').append('<option value="'+item+'">'+item+'</option>');
+					});
+					
+					$.each(datax.data.divisi, function (i, item){
+						$('#divisi').append('<option value="'+item.DIVISI+'">'+item.DIVISI+'</option>');
+					});
+					
+					$.each(datax.data.am, function (i, item){
+						$('#am').append('<option value="'+item.AM+'">'+item.AM+'</option>');
+					});
+					
+					$.each(datax.data.order_type, function (i, item){
+						$('#order_type').append('<option value="'+item.ORDER_TYPE+'">'+item.ORDER_TYPE+'</option>');
+					});
+					
+					$.each(datax.data.order_status, function (i, item){
+						$('#order_status').append('<option value="'+item.ORDER_STATUS+'">'+item.ORDER_STATUS+'</option>');
+					});
+					
+					$.each(datax.data.segmen, function (i, item){
+						$('#segmen').append('<option value="'+item.SEGMEN+'">'+item.SEGMEN+'</option>');
+					});
+					
+					$.each(datax.data.order_trans, function (i, item){
+						$('#order_trans').append('<option value="'+item.ORDER_TRANS+'">'+item.ORDER_TRANS+'</option>');
+					});
+					
+					$.each(datax.data.vendor_name, function (i, item){
+						$('#vendor_name').append('<option value="'+item.VENDOR_NAME+'">'+item.VENDOR_NAME+'</option>');
+					});
+					
+					$.each(datax.data.minmax, function (i, item){
+						$('#ogp_from').val(item.MIN2);
+						$('#ogp_to').val(item.MAX2);
+					});
+					
+					//qoute
+					
+					$.each(datax.data.status_quote, function (i, item){
+						$('#status_quote').append('<option value="'+item.STATUS_QUOTE+'">'+item.STATUS_QUOTE+'</option>');
+					});
+					
+					$.each(datax.data.minmax, function (i, item){
+						$('#quote_from').val(item.MIN2);
+						$('#quote_to').val(item.MAX2);
+					});
+					
+					//am
+					
+					$.each(datax.data.periode_create, function (i, item){
+						$('#am_periode_create').append('<option value="'+item+'">'+item+'</option>');
+					});
+					
+					$.each(datax.data.divisi, function (i, item){
+						$('#am_divisi').append('<option value="'+item.DIVISI+'">'+item.DIVISI+'</option>');
+					});
+					
+					$.each(datax.data.am, function (i, item){
+						$('#am_am').append('<option value="'+item.AM+'">'+item.AM+'</option>');
+					});
+					
+					$.each(datax.data.order_type, function (i, item){
+						$('#am_order_type').append('<option value="'+item.ORDER_TYPE+'">'+item.ORDER_TYPE+'</option>');
+					});
+					
+					$.each(datax.data.order_status, function (i, item){
+						$('#am_order_status').append('<option value="'+item.ORDER_STATUS+'">'+item.ORDER_STATUS+'</option>');
+					});
+					
+					$.each(datax.data.order_trans, function (i, item){
+						$('#am_order_trans').append('<option value="'+item.ORDER_TRANS+'">'+item.ORDER_TRANS+'</option>');
+					});
+					
+					$.each(datax.data.segmen, function (i, item){
+						$('#am_segmen').append('<option value="'+item.SEGMEN+'">'+item.SEGMEN+'</option>');
+					});
+					
+					$.each(datax.data.status_quote, function (i, item){
+						$('#am_status_quote').append('<option value="'+item.STATUS_QUOTE+'">'+item.STATUS_QUOTE+'</option>');
+					});
+					
+					$.each(datax.data.vendor_name, function (i, item){
+						$('#am_vendor_name').append('<option value="'+item.VENDOR_NAME+'">'+item.VENDOR_NAME+'</option>');
+					});
+					
+					$.each(datax.data.minmax, function (i, item){
+						$('#am_ogp_from').val(item.MIN2);
+						$('#am_ogp_to').val(item.MAX2);
+					});
+					
+					//tenos
+					
+					$.each(datax.data.periode_create, function (i, item){
+						$('#tenos_periode_create').append('<option value="'+item+'">'+item+'</option>');
+					});
+					
+					$.each(datax.data.divisi, function (i, item){
+						$('#tenos_divisi').append('<option value="'+item.DIVISI+'">'+item.DIVISI+'</option>');
+					});
+					
+					$.each(datax.data.am, function (i, item){
+						$('#tenos_am').append('<option value="'+item.AM+'">'+item.AM+'</option>');
+					});
+					
+					$.each(datax.data.order_type, function (i, item){
+						$('#tenos_order_type').append('<option value="'+item.ORDER_TYPE+'">'+item.ORDER_TYPE+'</option>');
+					});
+					
+					$.each(datax.data.order_status, function (i, item){
+						$('#tenos_order_status').append('<option value="'+item.ORDER_STATUS+'">'+item.ORDER_STATUS+'</option>');
+					});
+					
+					$.each(datax.data.segmen, function (i, item){
+						$('#tenos_segmen').append('<option value="'+item.SEGMEN+'">'+item.SEGMEN+'</option>');
+					});
+					
+					$.each(datax.data.order_trans, function (i, item){
+						$('#tenos_order_trans').append('<option value="'+item.ORDER_TRANS+'">'+item.ORDER_TRANS+'</option>');
+					});
+					
+					$.each(datax.data.vendor_name, function (i, item){
+						$('#tenos_vendor_name').append('<option value="'+item.VENDOR_NAME+'">'+item.VENDOR_NAME+'</option>');
+					});
+					
+					$.each(datax.data.status_quote, function (i, item){
+						$('#tenos_status_quote').append('<option value="'+item.STATUS_QUOTE+'">'+item.STATUS_QUOTE+'</option>');
+					});
+					
+					$.each(datax.data.minmax, function (i, item){
+						$('#tenos_from').val(item.MIN2);
+						$('#tenos_to').val(item.MAX2);
+					});
+				
+				
+					$('#am_periode_create').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_divisi').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_am').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_order_type').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_order_status').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_segmen').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_status_quote').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_umur_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_order_trans').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_vendor_name').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am_umur_status_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					//tenos
+					
+					
+					$('#tenos_periode_create').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_divisi').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_am').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_order_type').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_order_status').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_segmen').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_status_quote').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_umur_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_order_trans').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_vendor_name').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#tenos_umur_status_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					//ogp
+					
+					$('#periode_create').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#divisi').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#am').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#order_type').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#order_status').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#order_trans').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#segmen').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#status_quote').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#umur_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#umur_status_order').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#vendor_name').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#umur_quote').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					$('#umur_status_quote').multiselect({
+						enableFiltering: true,
+						includeSelectAllOption: true,
+						selectAllValue: 'select-all-value',
+						buttonWidth: '80px',
+					});
+					
+					load_ogp();
+					//load_tenos();
+					//load_am();
+					load_quote();
+				}
+				
+				document.getElementById('ogp_spiner').style.display = 'none';
+				document.getElementById('am_spiner').style.display = 'none';
+				document.getElementById('quote_spiner').style.display = 'none';
+				document.getElementById('tenos_spiner').style.display = 'none';
+				
+				document.getElementById('ogp_spiner_li').style.display = '';
+				document.getElementById('am_spiner_li').style.display = '';
+				document.getElementById('quote_spiner_li').style.display = '';
+				document.getElementById('tenos_spiner_li').style.display = '';
+			}
+	});
+	
+	
+	$('#ogp_from').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	$('#ogp_to').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	$('#am_ogp_from').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	$('#am_ogp_to').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	$('#quote_from').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	$('#quote_to').datepicker({
+		dateFormat : "dd-mm-yy"
+	});
+	
+	function view(tabel, field, process = '', subprocess=''){
+		// tabel => dashboard (1 ogp, 3 am, 2 tenos, 4 quote)
+		// field => kolom (1 dbs 0-7, 2 dbs 7-15, 3 dbs >15, 4 dbs all)
+		// process => jika tabel = 1 maka process = status proses, jika tabel 3 maka process = am
+		
+		//console.log($('#am').val());
+		var xxx = '';
+		if(tabel == 3){
+			xxx = 'am_';
+		}
+		
+		ogp_from = $('#'+xxx+'ogp_from').val();
+		ogp_to = $('#'+xxx+'ogp_to').val();
+		
+		var periode_create = '';
+		$.each($('#'+xxx+'periode_create').val(), function(i, item){
+			if(periode_create == ''){
+				periode_create = item;
+			}else{
+				periode_create = periode_create+"^_"+item;
+			}
+		});
+		
+		
+		var order_type = '';
+		$.each($('#'+xxx+'order_type').val(), function(i, item){
+			if(order_type == ''){
+				order_type = item;
+			}else{
+				order_type = order_type+"^_"+item;
+			}
+		});
+		
+		
+		var order_status = '';
+		$.each($('#'+xxx+'order_status').val(), function(i, item){
+			if(order_status == ''){
+				order_status = item;
+			}else{
+				order_status = order_status+"^_"+item;
+			}
+		});
+		
+		var divisi = '';
+		$.each($('#'+xxx+'divisi').val(), function(i, item){
+			if(divisi == ''){
+				divisi = item;
+			}else{
+				divisi = divisi+"^_"+item;
+			}
+		});
+		
+		var segmen = '';
+		$.each($('#'+xxx+'segmen').val(), function(i, item){
+			if(segmen == ''){
+				segmen = item;
+			}else{
+				segmen = segmen+"^_"+item;
+			}
+		});
+		
+		var am = '';
+		$.each($('#'+xxx+'am').val(), function(i, item){
+			if(am == ''){
+				am = item;
+			}else{
+				am = am+"^_"+item;
+			}
+		});
+		
+		var order_trans = '';
+		$.each($('#'+xxx+'order_trans').val(), function(i, item){
+			if(order_trans == ''){
+				order_trans = item;
+			}else{
+				order_trans = order_trans+"^_"+item;
+			}
+		});
+		
+		var umur_order = '';
+		$.each($('#'+xxx+'umur_order').val(), function(i, item){
+			if(umur_order == ''){
+				umur_order = item;
+			}else{
+				umur_order = umur_order+"^_"+item;
+			}
+		});
+		
+		var umur_status_order = '';
+		$.each($('#'+xxx+'umur_status_order').val(), function(i, item){
+			if(umur_status_order == ''){
+				umur_status_order = item;
+			}else{
+				umur_status_order = umur_status_order+"^_"+item;
+			}
+		});
+		
+		var vendor_name = '';
+		$.each($('#'+xxx+'vendor_name').val(), function(i, item){
+			if(vendor_name == ''){
+				vendor_name = item;
+			}else{
+				vendor_name = vendor_name+"^_"+item;
+			}
+		});
+		
+		var data =
+			"from="+ogp_from+"&"+
+			"to="+ogp_to+"&"+
+			"periode_create="+periode_create+"&"+
+			"order_type="+order_type+"&"+
+			"order_status="+order_status+"&"+
+			"divisi="+divisi+"&"+
+			"segmen="+segmen+"&"+
+			"am="+am+"&"+
+			"order_trans="+order_trans+"&"+
+			"umur_order="+umur_order+"&"+
+			"umur_status_order="+umur_status_order+"&"+
+			"vendor_name="+vendor_name;
+		console.log(data);
+		
+		window.open('<?php echo $this->basePath()?>/ncxtools/tools/ogpdetail?t_='+tabel+'&f_='+field+'&p_='+process+'&s_='+subprocess+'&'+data,'_blank');
+	}
+	
+</script> 

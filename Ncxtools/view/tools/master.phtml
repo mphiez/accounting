@@ -1,0 +1,1566 @@
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="<?php echo $this->basePath(); ?>/libraries/chosen/chosen.min.css">
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/treegrid/jquery.treegrid.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/libraries/select2/css/select2.css" type="text/css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="<?php echo $this->basePath()?>/libraries/treegrid/jquery.treegrid.min.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/multiselect/checktree.js"></script>
+<script src="<?php echo $this->basePath()?>/libraries/select2/js/select2.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type='text/javascript' src="<?php echo $this->basePath(); ?>/libraries/chosen/chosen.jquery.min.js"></script>
+<style>
+	.content{
+		margin-bottom : 50px;
+	}
+
+	.list-group-item, .list-group-item > label{
+		cursor:pointer;
+	}
+	.list-group-item:hover, .list-group-item > label:hover{
+		background-color:lightgray;
+	}
+	
+	.well{
+		background-color: #d9534f;
+		border: 1px solid #d43f3a;
+		color:white;
+	}
+	
+	ul {
+	  list-style-type: none;
+	  margin: 3px;
+	}
+
+	ul.checktree li:before {
+	  height: 1em;
+	  width: 12px;
+	  border-bottom: 2px dotted lightblue;
+	  content: "";
+	  display: inline-block;
+	  top: -0.3em;
+	}
+
+	ul.checktree li { border-left: 2px dotted lightblue; padding:5px 0px 5px 0px;}
+	li label {cursor:pointer;}
+	li label:hover {color: blue}
+
+	ul.checktree li:last-child:before { border-left: 2px dotted lightblue; }
+
+	ul.checktree li:last-child { border-left: none; }
+	
+	i > label {
+		padding :5px;
+	}
+	
+	td i {
+		padding-right: 5px;
+		color: #ec8336;
+	}
+
+	.glyphicon-usd{
+		color: #41ec36;
+		border: 1px solid #14e717;
+		font-size: 9px;
+		margin-right: 3px;
+		padding: 1px 3px 1px 2px;
+		border-left-width: 2px;
+	}
+	
+	.glyphicon-cog{
+		color:#2da5cc;
+	}
+	
+	table-hierarchy. > tr > td {
+		cursor : pointer;
+	}
+	
+</style>
+<div class="row">
+	<div class="col-md-12">
+	  <h3>Search Master Data</h3>
+	  <div class="row well" style="margin-bottom:0px;padding:20px;border-radius: 5px 5px 0px 0px">
+		<div class="col-md-12">
+			<div class="form-group">
+				<div id="master_search">
+					<div class="col-md-2">
+						<label>Keyword Search</label>
+					</div>
+					<div class="col-md-4">
+						<input type="text" value="" placeholder="Silahkan masukan keyword pencarian.." id="search" class="form-control">
+					</div>
+				</div>
+				<div id="order_search" style="display:none">
+					<div class="col-md-1">
+						<label>Order ID</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" value="" placeholder=" " id="order_id_key" class="form-control">
+					</div>
+					<div class="col-md-1">
+						<label>SID</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" value="" placeholder=" " id="sid_key" class="form-control">
+					</div>
+				</div>
+				<div id="billcom_search" style="display:none">
+					<div class="col-md-1">
+						<label>Order ID</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" value="" placeholder=" " id="order_id_billcom_key" class="form-control">
+					</div>
+					<div class="col-md-1">
+						<label>No Asset</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" value="" placeholder="" id="asset_key" class="form-control">
+					</div>
+				</div>
+				<div class="col-md-2">
+					<label>Keyword Category</label>
+				</div>
+				<div class="col-md-3">
+					<select id="category" class="form-control" onchange="return show_view()">
+						<option value="">Search All</option>
+						<option value="CA">Customer Account</option>
+						<option value="BA">BIlling Account</option>
+						<option value="SA">Service Account</option>
+						<option value="SID">Serial Number</option>
+						<option value="ACCOUNT_NAS">Account NAS</option>
+						<option value="NIPNAS">NIPNAS</option>
+						<option value="NAME">Name</option>
+						<!--<option value="ORDER">Tanggal Order</option>
+						<option value="ASSET">Update Tanggal Termin</option>-->
+					</select>
+				</div>
+				<div class="col-md-1">
+					<button id="kirim" onclick="return search2()" class="btn btn-default"> Search </button>
+					<input type="hidden" id="counter" value="0">
+				</div>
+			</div>
+		</div>
+	  </div>
+	  <div class="row" style="background-color: whitesmoke;border: 1px solid #e3e3e3;min-height:450px;border-radius: 0px 0px 5px 5px;padding-top: 30px;">
+		  <div class="col-md-12">
+				<div id="hierarchy_view" class="col-md-3" style="background-color:white;border:1px solid lightgray; border-radius:5px;max-height:600px; min-height:500px;padding-top:20px;overflow-y:scroll;">
+					<table class="tree table table-hover table-strips" style="border:1px solid lightgray" id="table-hierarchy">
+						<tr>
+                            <th class="text-center" style="background-color:#;"><input type="text" placeholder="Search . . ." id="searchcabasa" class="form-control" onkeyup="return searchhierarchy()">
+								<div style="display:none" id="downhere">
+								</div></th>
+						</tr>
+					</table>
+				</div>
+				<div class="col-md-9" id="master_view">
+					<div class="col-md-12">
+						<div class="well" style="background-color:white;color:black;border: 1px solid gray;">
+							<label id="head"></label>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group row">
+					<label class="col-sm-4" id="lb_name">Customer Name</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control form-control-sm" value="" id="name">
+					</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Address</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="address" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Account Id</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="sid" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4" id="lb_cust">Customer Account</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="ca" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Witel</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="witel" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Segment</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="segment" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Subsegment</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="subsegment" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">NIPNAS</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="nipnas">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">ACCOUNT NAS</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="account_nas">
+							<input type="hidden" class="form-control form-control-sm" value="" id="loc">
+							<input type="hidden" class="form-control form-control-sm" value="" id="currency">
+							<input type="hidden" class="form-control form-control-sm" value="" id="status">
+							<input type="hidden" class="form-control form-control-sm" value="" id="bussiness_area">
+							<input type="hidden" class="form-control form-control-sm" value="" id="customer_group">
+							<input type="hidden" class="form-control form-control-sm" value="" id="affileiated_id">
+							<input type="hidden" class="form-control form-control-sm" value="" id="bp_type">
+							<input type="hidden" class="form-control form-control-sm" value="" id="classification">
+							<input type="hidden" class="form-control form-control-sm" value="" id="pricing_procedure">
+							<input type="hidden" class="form-control form-control-sm" value="" id="ppn">
+							<input type="hidden" class="form-control form-control-sm" value="" id="region">
+							<input type="hidden" class="form-control form-control-sm" value="" id="tax_num">
+							<input type="hidden" class="form-control form-control-sm" value="" id="vat_category">
+							<input type="hidden" class="form-control form-control-sm" value="" id="acc_num">
+							<input type="hidden" class="form-control form-control-sm" value="" id="type_acc_cd">
+							
+							<input type="hidden" class="form-control form-control-sm" value="" id="nipnas_old">
+							<input type="hidden" class="form-control form-control-sm" value="" id="account_nas_old">
+							<input type="hidden" class="form-control form-control-sm" value="" id="name_old">
+							<input type="hidden" class="form-control form-control-sm" value="" id="reason_old">
+							<input type="hidden" class="form-control form-control-sm" value="" id="loc_parent">
+							
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Change Reason Code</label>
+						<div class="col-sm-8">
+							<textarea class="form-control form-control-sm" value="" id="reason"></textarea>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-sm-12" id="row_save">
+							<button id="merge_button" style="display:none;margin:3px;" class="btn btn-success pull-right" onclick="return merge_action()">Merge</button>
+							<button style="display: none; margin:3px;" class="btn btn-warning pull-right" id="move" onclick="return move_ba()">Move</button>
+							
+							<button style="margin:3px;" class="btn btn-danger pull-right" id="save" onclick="return update_save()">Simpan</button>
+							<button style="display: none; margin:3px;" class="btn btn-info pull-right" id="merge_ca_button" onclick="return merge_form()">Merge CA</button>
+						</div>
+					</div>
+					</div>
+					
+						<!-- /.tab-content -->
+					  </div>
+					  <div class="col-md-12" id="order_view" style="display:none">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-sm-4">Customer Name</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control form-control-sm" value="" id="name_order" readonly>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-4">Order ID</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control form-control-sm" value="" id="order_id_order" readonly>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-sm-4">Millestone Status</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-control form-control-sm" value="" id="millestone_order" readonly>
+								</div>
+							</div>
+							<div class="form-group row">
+								<table class="table table-hover table-strips" id="example2">
+									<thead>
+										<tr>
+											<th></th>
+											<th>Provisioning Date</th>
+											<th>Bill Date</th>
+											<th>Baso Date</th>
+											<th>Integration Date</th>
+											<th>Start Date</th>
+											<th>End Date</th>
+										</tr>
+									</thead>
+									<tbody id="body-content-order">
+										
+									</tbody>
+								</table>
+								<div class="form-group row">
+									<div class="col-sm-12" id="row_save_order">
+										<button class="btn btn-danger pull-right" id="save_order" onclick="return save_order()">Simpan</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12" id="billcom_view" style="display:none">
+						
+						<div class="col-md-3">
+						</div>
+						<div class="col-md-6">
+							<div class="form-group row">
+							<table class="table table-hover table-strips" id="example2">
+								<thead>
+									<tr width="50px">
+										<th>Sequence</th>
+										<th>Tanggal Termin</th>
+									</tr>
+								</thead>
+								<tbody id="body-content-termin">
+								</tbody>
+							</table>
+							<div class="form-group row">
+								<div class="col-sm-12" id="row_save_billcom">
+									<button class="btn btn-danger pull-right" onclick="return save_order_billcom()">Simpan</button>
+								</div>
+							</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+						</div>
+					</div>
+				</div>
+		  </div>
+	</div>
+	<div class="col-md-12">
+	  <div id="container"></div>
+	</div>
+	<div id="modal-listCustomer" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-info">
+				<table class="table table-hover table-strips">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>LOC</th>
+							<th>Segment</th>
+							<th>Witel</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="tabel-customer">
+					</tbody>
+				</table>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div id="modal-update" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Status Perubahan Data</h4>
+		  </div>
+		  <div class="modal-body">
+			<div id="success-update">
+				
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div id="merge_modal" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Merge Billing Account</h4>
+		  </div>
+		  <div class="modal-body">
+
+			<div class="row" id="sadsa">
+				<div class="col-md-12">
+					<div class="form-group row">
+						<label class="col-sm-4">Billing Account Old</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="ba_old" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Billing Account New</label>
+						<div class="col-sm-8">
+							<select id="ba_new" onchange="return add_accnas()" class="form-control chosen-select1">
+							
+							</select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Account Nas</label>
+						<div class="col-sm-8">
+							<select id="merge_acnas" class="form-control" onchange="return open_lainnya()">
+							
+							</select>
+						</div>
+					</div>
+					<div class="form-group row" id="accnas_lain_view" style="display:none">
+						<label class="col-sm-4">Account Nas Baru</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="accnas_lain">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		  </div>
+		  <div class="modal-footer" id="merge_modal_button">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+			<button type="button" class="btn btn-danger" onclick="return simpan_merge()">Simpan</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<div id="merge_ca_modal" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title modal-success">Merge Customer Account</h4>
+		  </div>
+		  <div class="modal-body">
+
+			<div class="row" id="merge_formx">
+				<div class="col-md-12">
+					<div class="form-group row">
+						<label class="col-sm-4">Customer Account Old</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="ca_old" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Customer Name</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="ca_name" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Customer Account Target</label>
+						<div class="col-sm-8">
+							<select class="form-control" id="ca_target" style="width: 100%"></select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4">Nipnas New</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control form-control-sm" value="" id="nipnas_new">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		  </div>
+		  <div class="modal-footer" id="merge_ca_modal_button">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+			<button type="button" class="btn btn-danger" onclick="return simpan_merge_ca()">Simpan</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<div id="modal-move" class="modal fade" role="dialog">
+		<div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  <h4 class="modal-title modal-success">Move BA</h4>
+		  </div>
+		  <div class="modal-body">
+		  		<div class="form-group row">
+					<label class="col-sm-4">Billing Name</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control form-control-sm" value="" id="data_name_source" readonly>
+					</div>
+				</div>
+			 	<div class="form-group row">
+					<label class="col-sm-4">BA Source</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control form-control-sm" value="" id="data_ba_source" readonly>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="col-sm-4">CA Source</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control form-control-sm" value="" id="data_ca_source" readonly>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="col-sm-4">CA Target</label>
+					<div class="col-sm-8">
+						<select class="form-control" id="select2" style="width: 100%"></select>
+					</div>
+				</div>
+		  </div>
+		  <div class="modal-footer">
+			 <button type="button" class="btn btn-primary" id="btn_save_move" onclick="return save_move()">Save</button>
+		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+		</div>
+	 </div>
+	
+</div>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+	function show_view(){
+		
+		if($('#category').val() == 'ORDER'){
+			document.getElementById('order_view').style.display = '';
+			document.getElementById('master_view').style.display = 'none';
+			document.getElementById('hierarchy_view').style.display = 'none';
+			document.getElementById('order_search').style.display = '';
+			document.getElementById('master_search').style.display = 'none';
+			document.getElementById('billcom_search').style.display = 'none';
+			document.getElementById('billcom_view').style.display = 'none';
+		}else if($('#category').val() == 'ASSET'){
+			document.getElementById('order_view').style.display = 'none';
+			document.getElementById('master_view').style.display = 'none';
+			document.getElementById('hierarchy_view').style.display = 'none';
+			document.getElementById('order_search').style.display = 'none';
+			document.getElementById('master_search').style.display = 'none';
+			document.getElementById('billcom_search').style.display = '';
+			document.getElementById('billcom_view').style.display = '';
+		}else{
+			document.getElementById('order_view').style.display = 'none';
+			document.getElementById('master_view').style.display = '';
+			document.getElementById('hierarchy_view').style.display = '';
+			document.getElementById('order_search').style.display = 'none';
+			document.getElementById('master_search').style.display = '';
+			document.getElementById('billcom_search').style.display = 'none';
+			document.getElementById('billcom_view').style.display = 'none';
+		}
+	}
+
+
+	function search2(){
+		if($('#category').val() == 'ORDER'){
+			$.ajax({
+				url: '<?php echo $this->basePath()?>/ncxtools/data/getListOrder',
+				type: "POST",
+				beforeSend: function( xhr ) {
+					document.getElementById('kirim').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Search ';
+					document.getElementById('body-content-order').innerHTML = '';
+					$('#name_order').val('');
+					$('#order_id_order').val('');
+					$('#millestone_order').val('');
+				},
+				data: {order_id : $('#order_id_key').val(), sid : $('#sid_key').val()},
+				success: function(datax) {
+					if(datax.code == 0){
+						$.each(datax.data, function(i, item){
+							console.log('sad');
+							$('#name_order').val(item.CA);
+							$('#order_id_order').val(item.ORDER_NUM);
+							$('#millestone_order').val(item.MILESTONE_CODE);
+							$('#body-content-order').append('<tr>'+
+								'<td>Tanggal</td>'+
+								'<td><input type="text" class="form-control order_time" value="'+item.PROVISIONING_DT+'" id="provisioning_order_new">'+
+								'<input type="hidden" value="'+item.PROVISIONING_DT+'" id="provisioning_order_old"></td>'+
+								'<td><input type="text" class="form-control order_time" value="'+item.BILL_DT+'" id="bill_order_new">'+
+								'<input type="hidden" value="'+item.BILL_DT+'" id="bill_order_old"></td>'+
+								'<td><input type="text"  class="form-control order_time" value="'+item.BASO_DT+'" id="baso_order_new">'+
+								'<input type="hidden" value="'+item.BASO_DT+'" id="baso_order_old"></td>'+
+								'<td><input type="text" class="form-control order_time" value="'+item.INTEGRATION_DT+'" id="integration_order_new">'+
+								'<input type="hidden" value="'+item.INTEGRATION_DT+'" id="integration_order_old"></td>'+
+								'<td><input type="text" class="form-control order_time" value="'+item.AGREE_START+'" id="agree_start_order_new">'+
+								'<input type="hidden" value="'+item.AGREE_START+'" id="agree_start_order_old"></td>'+
+								'<td><input type="text"  class="form-control order_time" value="'+item.AGREE_END+'" id="agree_end_order_new">'+
+								'<input type="hidden" value="'+item.AGREE_END+'" id="agree_end_order_old"></td>'+
+							'</tr>');
+							if(item.MILESTONE_CODE == 'FULFILL BILLING COMPLETE'){
+								$('#provisioning_order_new').attr('readonly',true);
+								$('#bill_order_new').attr('readonly',true);
+								$('#baso_order_new').attr('readonly',true);
+								$('#integration_order_new').attr('readonly',true);
+								$('#agree_start_order_new').datepicker({
+									dateFormat : "dd-mm-yy"
+								});
+								$('#agree_end_order_new').datepicker({
+									dateFormat : "dd-mm-yy"
+								});
+								
+							}else{
+								$('.order_time').datepicker({
+									dateFormat : "dd-mm-yy"
+								});
+							}
+						});
+						
+					}
+					
+					document.getElementById('kirim').innerHTML = ' Search ';
+				}
+			});
+
+		}else if($('#category').val() == 'ASSET'){
+
+			$.ajax({
+				url: '<?php echo $this->basePath()?>/ncxtools/data/getListTermin',
+				type: "POST",
+				beforeSend: function( xhr ) {
+					document.getElementById('kirim').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Search ';
+					document.getElementById('body-content-termin').innerHTML = '';
+				},
+				data: {order_id : $('#order_id_billcom_key').val(), no_asset : $('#asset_key').val()},
+				success: function(datax) {
+					if(datax.code == 0){	
+						$.each(datax.data, function(i, item){
+							$('#body-content-termin').append('<tr>'+
+								
+								'<td>'+item.CX_SEQUENCE+''+
+								'<input type="hidden" value="'+item.CX_SEQUENCE+'" name="sequence[]" id="cx_sequence"></td>'+
+								'<td><input name="termin_date[]" type="text" class="form-control termin_time" value="'+item.TERMIN_BILLDATE+'" id="'+item.CX_SEQUENCE+'">'+
+								'<input type="hidden" value="'+item.TERMIN_BILLDATE+'" id="termin_billdate"></td>'+
+								
+							'</tr>');
+						});
+						$('.termin_time').datepicker({
+							dateFormat : "dd-mm-yy"
+						});
+					}
+					
+					document.getElementById('kirim').innerHTML = ' Search ';
+				}
+			});
+
+		}else{
+			$.ajax({
+				url: '<?php echo $this->basePath()?>/ncxtools/data/getListCustomer',
+				type: "POST",
+				beforeSend: function( xhr ) {
+					document.getElementById('kirim').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Search ';
+					$('#address').val('');
+					$('#sid').val('');
+					$('#name').val('');
+					$('#ca').val('');
+					$('#segment').val('');
+					$('#subsegment').val('');
+					$('#witel').val('');
+					$('#nipnas').val('');
+					$('#account_nas').val('');
+					$('#loc').val('');
+					$('#currency').val('');
+					$('#status').val('');
+					$('#bussiness_area').val('');
+					$('#customer_group').val('');
+					$('#affileiated_id').val('');
+					$('#bp_type').val('');
+					$('#classification').val('');
+					$('#pricing_procedure').val('');
+					$('#ppn').val('');
+					$('#region').val('');
+					$('#tax_num').val('');
+					$('#vat_category').val('');
+					$('#acc_num').val('');
+					
+					$('#loc_parent').val('');
+					$('#account_nas_old').val('');
+					$('#nipnas_old').val('');
+					$('#name_old').val('');
+					
+					document.getElementById('downhere').innerHTML = '';
+					
+					document.getElementById('head').innerHTML = '';
+				},
+				data: {FILTER : $('#category').val(), VALUE : $('#search').val()},
+				success: function(datax) {
+					if(datax.code == 0){
+						if((datax.data).length > 1){
+							document.getElementById("tabel-customer").innerHTML = "";
+							$.each(datax.data, function(i, item){
+								$('#tabel-customer').append('<tr>'+
+									'<td>'+item.NAME+'</td>'+
+									'<td>'+item.LOC+'</td>'+
+									'<td>'+item.X_PTI1_SEGMENT+'</td>'+
+									'<td>'+item.X_PTI1_WITEL+'</td>'+
+									'<td><button class="btn btn-danger" onclick="return selectCustomer(&#39;'+item.LOC+'&#39;)">Pilih</button></td>'+
+								'</tr>');
+							});
+							$('#modal-listCustomer').modal();
+						}else{
+							$.each(datax.data, function(i, item){
+								cabasa(item.LOC);
+							});
+						}
+					}else{
+						alert('Not Found !');
+						document.getElementById('kirim').innerHTML = ' Search ';
+					}
+					
+					
+				}
+			});
+		}
+	}
+	
+	function cabasa(x, xx = ''){
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/getDetailcabasa',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				document.getElementById('kirim').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Search ';
+			},
+			data: {VALUE : x},
+			success: function(datax) {
+				if(datax.code == 0){
+					var loc_search = "";
+					var loc_par = "";
+					$.each(datax.data.ADDR, function(i, item){
+						if(typeof item.NAME != 'undefined'){
+							$('#name').val(item.NAME);
+							$('#name_old').val(item.NAME);
+						}
+						if(typeof item.ADDR_NAME != 'undefined'){
+							$('#address').val(item.ADDR_NAME);
+						}
+						if(typeof item.ROW_ID != 'undefined'){
+							$('#sid').val(item.ROW_ID);
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#ca').val(item.LOC);
+						}
+						if(typeof item.SEGMENT != 'undefined'){
+							$('#segment').val(item.SEGMENT);
+						}
+						if(typeof item.SUB_SEGMENT != 'undefined'){
+							$('#subsegment').val(item.SUB_SEGMENT);
+						}
+						if(typeof item.WITEL != 'undefined'){
+							$('#witel').val(item.WITEL);
+						}
+						if(typeof item.NIPNAS != 'undefined'){
+							$('#nipnas').val(item.NIPNAS);
+							$('#nipnas_old').val(item.NIPNAS);
+						}
+						if(typeof item.ACCOUNT_NAS != 'undefined'){
+							$('#account_nas').val(item.ACCOUNT_NAS);
+							$('#account_nas_old').val(item.ACCOUNT_NAS);
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#loc').val(item.LOC);
+							loc_search = item.LOC;
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#currency').val(item.CURRENCY);
+						}
+						if(typeof item.STATUS != 'undefined'){
+							$('#status').val(item.STATUS);
+						}
+						if(typeof item.BUSINESS_AREA != 'undefined'){
+							$('#bussiness_area').val(item.BUSINESS_AREA);
+						}
+						if(typeof item.CUSTOMER_GROUP != 'undefined'){
+							$('#customer_group').val(item.CUSTOMER_GROUP);
+						}
+						if(typeof item.AFFILIATED_ID != 'undefined'){
+							$('#affileiated_id').val(item.AFFILIATED_ID);
+						}
+						if(typeof item.BP_TYPE != 'undefined'){
+							$('#bp_type').val(item.BP_TYPE);
+						}
+						if(typeof item.CLASSIFICATION != 'undefined'){
+							$('#classification').val(item.CLASSIFICATION);
+						}
+						if(typeof item.PRICING_PROCEDURE != 'undefined'){
+							$('#pricing_procedure').val(item.PRICING_PROCEDURE);
+						}
+						if(typeof item.PPN != 'undefined'){
+							$('#ppn').val(item.PPN);
+						}
+						if(typeof item.REGION != 'undefined'){
+							$('#region').val(item.REGION);
+						}
+						if(typeof item.TAX_NUM != 'undefined'){
+							$('#tax_num').val(item.TAX_NUM);
+						}
+						if(typeof item.VAT_CATEGORY != 'undefined'){
+							$('#vat_category').val(item.VAT_CATEGORY);
+						}
+						if(typeof item.ACC_NUM != 'undefined'){
+							$('#acc_num').val(item.ACC_NUM);
+						}
+						
+						if(typeof item.LOC_CA != 'undefined'){
+							$('#loc_parent').val(item.LOC_CA);
+							loc_par = item.LOC_CA;
+						}
+						
+						if(typeof item.ACCNT_TYPE_CD != 'undefined'){
+							$('#type_acc_cd').val(item.ACCNT_TYPE_CD);
+							type = item.ACCNT_TYPE_CD;
+						}
+					});
+					
+					var det = "CA Detail ("+x+")";
+					document.getElementById('lb_cust').innerHTML = "Customer Account";
+					document.getElementById('lb_name').innerHTML = "Customer Name";
+					document.getElementById('merge_button').style.display = "none";
+					document.getElementById('merge_ca_button').style.display = "";
+					document.getElementById('move').style.display = "none";
+					if($('#category').val() == 'SA'){
+						det = "SA Detail ("+(loc_search)+")";
+						document.getElementById('lb_cust').innerHTML = "Service Account";
+						document.getElementById('lb_name').innerHTML = "Service Name";
+						document.getElementById('merge_button').style.display = "none";
+						document.getElementById('move').style.display = "";
+						document.getElementById('merge_ca_button').style.display = "none";
+					}else if($('#category').val() == 'BA' || $('#category').val() == 'ACCOUNT_NAS'){
+						det = "BA Detail ("+(loc_search)+")";
+						document.getElementById('lb_cust').innerHTML = "Billing Account";
+						document.getElementById('lb_name').innerHTML = "Billing Name";
+						document.getElementById('merge_button').style.display = "";
+						document.getElementById('move').style.display = "";
+						document.getElementById('merge_ca_button').style.display = "none";
+						
+					}
+					document.getElementById('head').innerHTML = det;
+				}
+				
+				if($('#category').val() == 'SID' || $('#category').val() == "BA" || $('#category').val() == 'ACCOUNT_NAS'){
+					x = xx;
+				}
+				
+				if($('#counter').val() < 1){//cek ini buat datagrid, soalnya gk jalan kalo di load 2 kali. fungsi hierarchy harus di load ganjil
+					var temp = ($('#counter').val() * 1) +1;
+					$('#counter').val(temp);
+					hierarchy(loc_par);
+				}else{
+					hierarchy(loc_par);
+					hierarchy(loc_par);
+				}
+				
+				
+			}
+		});
+	}
+	
+	function hierarchy(x){
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/getHierarchy',
+			type: "POST",
+			data: {VALUE : x},
+			beforeSend: function(){
+				$('.tree tr:not(:first-child)').remove();
+				$('.tree').append('<tr><td colspan="5" align="center"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Loading data . . .</td></tr>');
+				
+			},
+			success: function(datax) {
+				
+				$('.tree tr:not(:first-child)').remove();
+				
+				
+				if(datax.code == 0){
+					var dd = 0;
+					var head = 0;
+					$.each(datax.data, function(i, item){
+						
+						$('#downhere').append('<input type="hidden" value="'+item.LOC+'" name="listhierarcy[]">');
+						if(item.ACCNT_TYPE_CD == 'Customer'){
+							head = dd;
+							$('#table-hierarchy').append(
+								'<tr id="'+item.LOC+'" class="treegrid-'+dd+' listx">'+
+									'<td>'+
+									'<i class="glyphicon glyphicon-user"></i> <label style="cursor:pointer;" onclick="return select_edit(&#39;'+item.LOC+'&#39;,&#39;'+item.ACCNT_TYPE_CD+'&#39;)">'+item.LOC+'</label>'+
+									'</td>'+
+								'</tr>'
+							);
+							
+						}else{
+							var icon = '<i class="glyphicon glyphicon-cog"></i>';
+							if(item.ACCNT_TYPE_CD == 'Billing'){
+								var icon = '<i class="glyphicon glyphicon-usd"></i>';
+							}
+							$('#table-hierarchy').append(
+								'<tr id="'+item.LOC+'" class="treegrid-'+dd+' treegrid-parent-'+head+'" listx>'+
+									'<td>'+
+									icon+' <label style="cursor:pointer;" onclick="return select_edit(&#39;'+item.LOC+'&#39;,&#39;'+item.ACCNT_TYPE_CD+'&#39;)">'+item.LOC+'</label></td>'+
+								'</tr>'
+							);
+						}
+						dd++;
+					});
+				}
+				
+				if((datax.data == '') || (datax.data == null)){
+					
+					$('.tree').append('<tr><td colspan="5" align="center">No data availabel</td></tr>');
+					
+				}
+				document.getElementById('kirim').innerHTML = ' Search ';
+				$('.tree').treegrid();
+			}
+				
+			});
+	}
+	
+	function select_edit(x,y){
+		//var cek_cbs = x.substring(0,1);
+		document.getElementById('merge_button').style.display = "none";
+		document.getElementById('move').style.display = "none";
+		document.getElementById('merge_ca_button').style.display = "none";
+		
+		
+		
+		if(y == 'Billing' || y == 'Service'){
+			document.getElementById("move").style.display = '';	
+		}else{
+			document.getElementById("move").style.display = 'none';	
+		}
+		
+		if(y == 'Billing'){
+			document.getElementById("merge_button").style.display = '';	
+		}else{
+			document.getElementById("merge_button").style.display = 'none';	
+		}
+		
+		//console.log(cek_cbs);
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/getDetailcabasa',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				$('#address').val('');
+				$('#sid').val('');
+				$('#name').val('');
+				$('#ca').val('');
+				$('#segment').val('');
+				$('#subsegment').val('');
+				$('#witel').val('');
+				$('#nipnas').val('');
+				$('#account_nas').val('');
+				$('#loc').val('');
+				$('#currency').val('');
+				$('#status').val('');
+				$('#bussiness_area').val('');
+				$('#customer_group').val('');
+				$('#affileiated_id').val('');
+				$('#bp_type').val('');
+				$('#classification').val('');
+				$('#pricing_procedure').val('');
+				$('#ppn').val('');
+				$('#region').val('');
+				$('#tax_num').val('');
+				$('#vat_category').val('');
+				$('#acc_num').val('');
+				
+				$('#account_nas_old').val('');
+				$('#nipnas_old').val('');
+				$('#name_old').val('');
+				
+				document.getElementById('head').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Loading . . .';
+			},
+			data: {VALUE : x},
+			success: function(datax) {
+				if(datax.code == 0){
+					//console.log(datax.data.ADDR);ACCNT_TYPE_CD
+					var type = "";
+					$.each(datax.data.ADDR, function(i, item){
+						//console.log('masuk det');
+						if(typeof item.NAME != 'undefined'){
+							$('#name').val(item.NAME);
+							$('#name_old').val(item.NAME);
+						}
+						if(typeof item.ADDR_NAME != 'undefined'){
+							$('#address').val(item.ADDR_NAME);
+						}
+						if(typeof item.ROW_ID != 'undefined'){
+							$('#sid').val(item.ROW_ID);
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#ca').val(item.LOC);
+						}
+						if(typeof item.SEGMENT != 'undefined'){
+							$('#segment').val(item.SEGMENT);
+						}
+						if(typeof item.SUB_SEGMENT != 'undefined'){
+							$('#subsegment').val(item.SUB_SEGMENT);
+						}
+						if(typeof item.WITEL != 'undefined'){
+							$('#witel').val(item.WITEL);
+						}
+						if(typeof item.NIPNAS != 'undefined'){
+							$('#nipnas').val(item.NIPNAS);
+							$('#nipnas_old').val(item.NIPNAS);
+						}
+						if(typeof item.ACCOUNT_NAS != 'undefined'){
+							$('#account_nas').val(item.ACCOUNT_NAS);
+							$('#account_nas_old').val(item.ACCOUNT_NAS);
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#loc').val(item.LOC);
+						}
+						if(typeof item.LOC != 'undefined'){
+							$('#currency').val(item.CURRENCY);
+						}
+						if(typeof item.STATUS != 'undefined'){
+							$('#status').val(item.STATUS);
+						}
+						if(typeof item.BUSINESS_AREA != 'undefined'){
+							$('#bussiness_area').val(item.BUSINESS_AREA);
+						}
+						if(typeof item.CUSTOMER_GROUP != 'undefined'){
+							$('#customer_group').val(item.CUSTOMER_GROUP);
+						}
+						if(typeof item.AFFILIATED_ID != 'undefined'){
+							$('#affileiated_id').val(item.AFFILIATED_ID);
+						}
+						if(typeof item.BP_TYPE != 'undefined'){
+							$('#bp_type').val(item.BP_TYPE);
+						}
+						if(typeof item.CLASSIFICATION != 'undefined'){
+							$('#classification').val(item.CLASSIFICATION);
+						}
+						if(typeof item.PRICING_PROCEDURE != 'undefined'){
+							$('#pricing_procedure').val(item.PRICING_PROCEDURE);
+						}
+						if(typeof item.PPN != 'undefined'){
+							$('#ppn').val(item.PPN);
+						}
+						if(typeof item.REGION != 'undefined'){
+							$('#region').val(item.REGION);
+						}
+						if(typeof item.TAX_NUM != 'undefined'){
+							$('#tax_num').val(item.TAX_NUM);
+						}
+						if(typeof item.VAT_CATEGORY != 'undefined'){
+							$('#vat_category').val(item.VAT_CATEGORY);
+						}
+						if(typeof item.ACC_NUM != 'undefined'){
+							$('#acc_num').val(item.ACC_NUM);
+						}
+						if(typeof item.ACCNT_TYPE_CD != 'undefined'){
+							$('#type_acc_cd').val(item.ACCNT_TYPE_CD);
+							type = item.ACCNT_TYPE_CD;
+						}
+						if(typeof item.LOC_CA != 'undefined'){
+							$('#loc_parent').val(item.LOC_CA);
+							loc_par = item.LOC_CA;
+						}
+					});
+					var det = "CA Detail ("+x+")";
+					document.getElementById('lb_cust').innerHTML = "Customer Account";
+					document.getElementById('lb_name').innerHTML = "Customer Name";
+					document.getElementById('merge_button').style.display = "none";
+					document.getElementById('move').style.display = "none";
+					document.getElementById('merge_ca_button').style.display = "";
+					if(type == 'Billing'){
+						det = "BA Detail ("+x+")";
+						document.getElementById('lb_cust').innerHTML = "Billing Account";
+						document.getElementById('lb_name').innerHTML = "Billing Name";
+						document.getElementById('merge_button').style.display = "";
+						document.getElementById('move').style.display = "";
+						document.getElementById('merge_ca_button').style.display = "none";
+					}else if(type == 'Service'){
+						det = "SA Detail ("+x+")";
+						document.getElementById('lb_cust').innerHTML = "Service Account";
+						document.getElementById('lb_name').innerHTML = "Service Name";
+						document.getElementById('merge_button').style.display = "none";
+						document.getElementById('move').style.display = "";
+						document.getElementById('merge_ca_button').style.display = "none";
+					}
+					document.getElementById('head').innerHTML = det;
+				}
+			}
+		});
+	}
+	
+	function selectCustomer(loc){
+		$('#modal-listCustomer').modal('toggle');
+		cabasa(loc);
+	}
+
+
+	function move_ba(){
+		var fil = "BA";
+		if($('#type_acc_cd').val() == 'BIlling'){
+			fil = "BA";
+		}else if($('#type_acc_cd').val() == 'Service'){
+			fil = "SA";
+		}
+		$('#modal-move').modal();
+		
+		$('#data_name_source').val(document.getElementById("name").value);
+		$('#data_ca_source').val($('#loc_parent').val());
+		$('#data_ba_source').val(document.getElementById("ca").value);
+
+		$('#select2').select2({
+		  placeholder: "Search for a repository",	
+		  minimumInputLength: 3,
+		  ajax: {
+		    url: '<?php echo $this->basePath()?>/ncxtools/data/getListCA',
+		    data: function (params) {
+		      var query = {
+		        search: params.term
+		      }
+
+		      // Query parameters will be ?search=[term]&type=public
+		      return query;
+		    },
+		    processResults: function (datax) {
+		    	var arr = []
+                $.each(datax.data, function (index, value) {
+                    arr.push({
+                        id: value.ROW_ID + '~' + value.NIPNAS + '~' + value.SITE,
+                        value : value.ROW_ID + '~' + value.NIPNAS + '~' + value.SITE,
+                        text: value.ACCOUNT+' ('+value.SITE+')'
+                    })
+                })
+                return {
+                    results: arr
+                };
+	        
+		    },
+		  },
+		  escapeMarkup: function (markup) { return markup; },
+		});
+		//.on("select2:select", function (e) {
+		//     var selected_element = $(e.currentTarget);
+		//     var select_val = selected_element.val();
+		//     $('#value_select2').val(select_val);
+		//     console.log($("#select2").val())
+		//     console.log(select_val);
+		// });
+		//getListCA();
+	}
+
+	function getListCA(){
+		var data = '';
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/getListCA',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				// document.getElementById('row_save').innerHTML = '<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+			},
+			data: {
+					data
+			},
+			success: function(datax) {
+				//console.log(datax);
+				// document.getElementById('row_save').innerHTML = '<button class="btn btn-danger pull-right" id="save" onclick="return update_save()">Simpan</button>';
+				//$('#modal-update').modal();
+				if(datax.code == 0){
+
+					$.each(datax.data, function (i, item){
+						$('.chosen-select').append('<option value="'+item.ROW_ID+'~' +item.NIPNAS +'~'+item.SITE+' ">'+item.ACCOUNT+'('+item.SITE+')</option>');
+					});
+					$(".chosen-select").chosen({disable_search_threshold: 10});
+					//document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					//document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+			}
+		}); 
+
+	}
+	
+	$("#example").dataTable({
+		
+	});
+	$("#example3").dataTable({
+	
+	});
+	
+	function update_save(){
+		var reason = $('#reason').val();
+
+		if(reason == ""){
+			//alert("kosong");
+			$('#modal-update').modal();
+			document.getElementById('success-update').innerHTML = 'Change Reason Code mohon di isi';
+
+		}else{
+			//alert("ada");
+			var data1 = {
+						IN_LOC : $('#loc').val(),
+						IN_NAME : $('#name').val(),
+						IN_CURRENCY : $('#currency').val(),
+						IN_STATUS : $('#status').val(),
+						IN_BUSINESS_AREA : $('#bussiness_area').val(),
+						IN_CUSTOMER_GROUP : $('#customer_group').val(),
+						IN_ACCOUNT_NAS : $('#account_nas').val(),
+						IN_AFFILIATED_ID : $('#affileiated_id').val(),
+						IN_BP_TYPE : $('#bp_type').val(),
+						IN_CLASSIFICATION : $('#classification').val(),
+						IN_PRICING_PROCEDURE : $('#pricing_procedure').val(),
+						IN_PPN : $('#ppn').val(),
+						IN_REGION : $('#region').val(),
+						IN_SEGMENT : $('#segment').val(),
+						IN_SUB_SEGMENT : $('#subsegment').val(),
+						IN_TAX_NUM : $('#tax_num').val(),
+						IN_VAT_CATEGORY : $('#vat_category').val(),
+						IN_WITEL : $('#witel').val(),
+						IN_NIPNAS : $('#nipnas').val(),
+						IN_ACC_NUM : $('#acc_num').val(),
+						IN_REASON : $('#reason').val(),
+				}
+			
+			var data2 = {
+						IN_NAME : $('#name_old').val(),
+						IN_ACCOUNT_NAS : $('#account_nas_old').val(),
+						IN_NIPNAS : $('#nipnas_old').val(),
+						IN_REASON : $('#reason').val(),
+				}
+			var mergex = "";
+			var mergex2 = '<button id="merge_button" style="display:none;margin:3px;" class="btn btn-success pull-right" onclick="return merge_action()">Merge</button>';
+			
+			var movex = "";
+			var movex2 = '<button style="display: none; margin:3px;" class="btn btn-warning pull-right" id="move" onclick="return move_ba()">Move</button>';
+			
+			var merge_ca = '<button style="display: none; margin:3px;" class="btn btn-info pull-right" id="merge_ca_button" onclick="return merge_form()">Merge CA</button>';
+			var merge_ca2 = '';
+			
+			
+			
+			if($('#type_acc_cd').val() == 'Billing'){
+				var mergex = '<button style="margin:3px;" id="merge_button" class="btn btn-success pull-right">Merge</button>';
+				var mergex2 = '<button class="btn btn-success pull-right" style="margin:3px;" id="merge_button" onclick="return merge_action()">Merge</button>';
+			}
+			
+			if($('#type_acc_cd').val() == 'Billing' || $('#type_acc_cd').val() == 'Service'){
+				var movex = '<button style="margin:3px;" class="btn btn-warning pull-right"  id="move" >Move</button>';
+				var movex2 = '<button style="margin:3px;" class="btn btn-warning pull-right" id="move" onclick="return move_ba()">Move</button>';
+				merge_ca = '<button style="display: none; margin:3px;" class="btn btn-info pull-right" id="merge_ca_button" onclick="return merge_form()">Merge CA</button>';
+			}else if($('#type_acc_cd').val() == 'Customer'){
+				merge_ca = '<button style="margin:3px;" class="btn btn-info pull-right" id="merge_ca_button" onclick="return merge_form()">Merge CA</button>';
+			}
+			$.ajax({
+				url: '<?php echo $this->basePath()?>/ncxtools/data/update',
+				type: "POST",
+				beforeSend: function( xhr ) {
+					document.getElementById('row_save').innerHTML = merge_ca+mergex+movex+'<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+				},
+				data: {
+						data1, data2
+				},
+				success: function(datax) {
+					document.getElementById('row_save').innerHTML = merge_ca+mergex2+movex2+'<button class="btn btn-danger pull-right" style="margin:3px;" id="save" onclick="return update_save()">Simpan</button>';
+					$('#modal-update').modal();
+					document.getElementById('success-update').innerHTML = '';
+					if(datax.code == 0){
+						document.getElementById('success-update').innerHTML = 'Update berhasil !';
+					}else{
+						document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+					}
+				}
+			}); 
+		}
+
+		//console.log(reason);
+
+		
+	}
+	
+	function save_order(){
+		var data1 = {
+					order_id : $('#order_id_key').val(),
+					sid : $('#sid_key').val(),
+					provisioning_order : $('#provisioning_order_new').val(),
+					bill_order : $('#bill_order_new').val(),
+					baso_order : $('#baso_order_new').val(),
+					integration_order : $('#integration_order_new').val(),
+					agree_start_order : $('#agree_start_order_new').val(),
+					agree_end_order : $('#agree_end_order_new').val(),
+			}
+		
+		var data2 = {
+					provisioning_order : $('#provisioning_order_old').val(),
+					bill_order : $('#bill_order_old').val(),
+					baso_order : $('#baso_order_old').val(),
+					integration_order : $('#integration_order_old').val(),
+					agree_start_order : $('#agree_start_order_old').val(),
+					agree_end_order : $('#agree_end_order_old').val(),
+			}
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/updateTanggal',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				document.getElementById('row_save_order').innerHTML = '<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+			},
+			data: {
+					data1, data2
+			},
+			success: function(datax) {
+				document.getElementById('row_save_order').innerHTML = '<button class="btn btn-danger pull-right" id="save" onclick="return save_order()">Simpan</button>';
+				search2();
+				$('#modal-update').modal();
+				if(datax.code == 0){
+					document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+				document.getElementById('row_save_order').innerHTML = '<button class="btn btn-danger pull-right" onclick="return save_order()"> Simpan</button>';
+				
+				
+			}
+		}); 
+	};
+	
+	
+	
+	function searchhierarchy(){
+		var str = $('#searchcabasa').val();
+		//console.log(str.substring(0,1));
+		fCode = document.getElementsByName("listhierarcy[]");
+		if(str.length > 3){
+			
+			if((str.substring(0,1)) == 'B' ||(str.substring(0,1)) == 'C' ||(str.substring(0,1)) == 'S'){
+				str = str.substring(1,(str.length));
+			}
+			
+			for ( var i = 0; i < fCode.length; i++ ){
+				
+				var string = fCode[i].value;
+				document.getElementById(string).style.display = 'none';
+				var dada = string.search(str);
+				if(dada > 0){
+					//console.log(str);
+					document.getElementById(string).style.display = '';
+				}
+			}
+		}else{
+			for ( var i = 0; i < fCode.length; i++ ){
+				var string = fCode[i].value;
+				document.getElementById(string).style.display = '';
+			}
+		}
+	}
+
+
+	function save_move(){
+
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/saveMoveBACA',
+			type: "POST",
+			beforeSend: function( xhr ) {
+				document.getElementById('btn_save_move').innerHTML = '<img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Save ';
+				//document.getElementById('body-content-order').innerHTML = '';
+				// $('#name_order').val('');
+				// $('#order_id_order').val('');
+				// $('#service_id_order').val('');
+				// $('#agree_id_order').val('');
+				// $('#millestone_order').val('');
+			},
+			data: {ba_source : document.getElementById("ca").value, ca_source: $("#loc_parent").val(), target : $("#select2").val() },
+			success: function(datax) {
+				if(datax.code == 0){	
+					$('#modal-move').modal('hide');
+					$('#modal-update').modal();
+					document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+				
+				document.getElementById('btn_save_move').innerHTML = ' Save ';
+			}
+		});
+
+	}
+	
+	function merge_form(){
+		$('#merge_ca_modal').modal();
+		$('#ca_name').val($('#name').val());
+		$('#ca_old').val($('#ca').val());
+		$('#ca_target').select2({
+		  placeholder: "Search for a repository",	
+		  minimumInputLength: 3,
+		  dropdownParent: $("#merge_ca_modal"),
+		  ajax: {
+		    url: '<?php echo $this->basePath()?>/ncxtools/data/getListCA',
+		    data: function (params) {
+		      var query = {
+		        search: params.term
+		      }
+
+		      // Query parameters will be ?search=[term]&type=public
+		      return query;
+		    },
+		    processResults: function (datax) {
+		    	var arr = []
+                $.each(datax.data, function (index, value) {
+                    arr.push({
+                        id: value.SITE,
+                        value : value.SITE,
+                        text: value.ACCOUNT+' ('+value.SITE+')'
+                    })
+                })
+                return {
+                    results: arr
+                };
+	        
+		    },
+		  },
+		  escapeMarkup: function (markup) { return markup; },
+		});
+	}
+	
+	function simpan_merge_ca(){
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/save-merge-ca',
+			type: "POST",
+			beforeSend: function(){			
+				document.getElementById('merge_ca_modal_button').innerHTML ='<button type="button" class="btn btn-default">Tutup</button><button type="button" class="btn btn-danger"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px">Simpan</button>';
+			},
+			data: {
+					in_loc_ca_old : $('#ca_old').val(), 
+					in_loc_ca_new : $('#ca_target').val(), 
+					in_nipnas_new : $('#nipnas_new').val(),
+				},
+			beforeSend: function(){
+				
+				document.getElementById('ba_new').innerHTML = "";
+				$('.chosen-select1').trigger("chosen:updated");
+				document.getElementById('merge_acnas').innerHTML = "";
+			},
+			success: function(datax) {
+				$('#modal-update').modal();
+				$('#merge_ca_modal').modal('toggle');
+				if(datax.code == 0){
+					document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+				document.getElementById('merge_ca_modal_button').innerHTML ='<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button><button type="button" class="btn btn-danger" onclick="return simpan_merge_ca()">Simpan</button>';
+			}
+			
+		});
+	}
+	
+	function merge_action(){
+		$('#merge_modal').modal();
+		$('#ba_old').val('');
+		var loc = $('#loc').val();
+		$('#ba_old').val(loc);
+		
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/getHierarchy',
+			type: "POST",
+			data: {VALUE : $('#loc_parent').val()},
+			beforeSend: function(){
+				
+				document.getElementById('ba_new').innerHTML = "";
+				$('.chosen-select1').trigger("chosen:updated");
+				document.getElementById('merge_acnas').innerHTML = "";
+			},
+			success: function(datax) {
+				if(datax.code == 0){
+
+					$('#ba_new').append('<option value=""> - Pilih Billing Account - </option>');
+					$.each(datax.data, function(i, item){
+						
+						if(item.ACCNT_TYPE_CD == 'Billing'){
+							$('#ba_new').append('<option id="'+item.LOC+'" data-name="'+item.X_PTI1_ACCNT_NAS+'" value="'+item.LOC+'">'+item.LOC+'</option>');
+							
+						}
+					});
+					$('.chosen-select1').chosen({no_results_text: "Oops, nothing found!"});
+					$('.chosen-select1').trigger("chosen:updated");
+					$('#merge_acnas').append('<option value=""> - Pilih Accnas - </option>');
+					$('#merge_acnas').append('<option value="'+($('#account_nas_old').val())+'">'+($('#account_nas_old').val())+' - '+loc+'</option>');
+					$('#merge_acnas').append('<option value="lain">Lainnya...</option>');
+				}
+			}
+			
+		});
+	}
+	
+	function open_lainnya(){
+		if($('#merge_acnas').val() == 'lain'){
+			document.getElementById('accnas_lain_view').style.display = "";
+		}else{
+			$('#accnas_lain').val('');
+			document.getElementById('accnas_lain_view').style.display = "none";
+		}
+	}
+	function add_accnas(){
+		document.getElementById('merge_acnas').innerHTML = "";
+		var c_layanan = $('#ba_new').val();
+		var svc_layanan = $('option#'+c_layanan).attr('data-name');
+		var loc = $('#loc').val();
+			$('#merge_acnas').append('<option value=""> -Pilih Accnas- </option>');
+			$('#merge_acnas').append('<option value="'+($('#account_nas_old').val())+'">'+($('#account_nas_old').val())+' - '+loc+'</option>');
+			$('#merge_acnas').append('<option value="'+svc_layanan+'">'+svc_layanan+' - '+c_layanan+'</option>');
+			$('#merge_acnas').append('<option value="lain">Lainnya...</option>');
+		
+	}
+	
+	function save_order_billcom(){
+		var sequence = document.getElementsByName("sequence[]");
+		var termin_date = document.getElementsByName("termin_date[]");
+		var data = new Array();
+		for ( var i = 0; i < sequence.length; i++ ){
+			console.log(termin_date[i].value);
+			var temp = {
+				'sequence' : sequence[i].value,
+				'termin_date' : termin_date[i].value
+			}	
+			data.push(temp);
+		}
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/updateTermin',
+			type: "POST",
+			data: {data, asset_key : $('#asset_key').val()},
+			beforeSend: function(){			
+				document.getElementById('row_save_billcom').innerHTML = '<button class="btn btn-danger pull-right"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px"> Simpan</button>';
+			},
+			success: function(datax) {
+				search2();
+				$('#modal-update').modal();
+				document.getElementById('success-update').innerHTML = "";
+				if(datax.code == 0){
+					document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+				document.getElementById('row_save_billcom').innerHTML = '<button class="btn btn-danger pull-right" onclick="return save_order_billcom()">Simpan</button>';
+			}
+			
+		});
+	}
+	
+	function simpan_merge(){
+		$.ajax({
+			url: '<?php echo $this->basePath()?>/ncxtools/data/mergesave',
+			type: "POST",
+			data: {
+				IN_LOC_BA_OLD: $('#ba_old').val(),
+				IN_LOC_BA_NEW: $('#ba_new').val(),
+				IN_NEW_ACCNAS: $('#merge_acnas').val(),
+				ACCNAS_LAIN: $('#accnas_lain').val(),
+			},
+			beforeSend: function(){			
+				document.getElementById('merge_modal_button').innerHTML = '<button type="button" class="btn btn-default">Tutup</button><button type="button" class="btn btn-danger"><img src="<?php echo $this->basePath()?>/images/spinner.gif" width="15px" height="15px">Simpan</button>';
+			},
+			success: function(datax) {
+				$('#modal-update').modal();
+				$('#merge_modal').modal('toggle');
+				document.getElementById('success-update').innerHTML = "";
+				if(datax.code == 0){
+					document.getElementById('success-update').innerHTML = 'Update berhasil !';
+				}else{
+					document.getElementById('success-update').innerHTML = 'Update gagal, silahkan ulangi kembali !';
+				}
+				document.getElementById('merge_modal_button').innerHTML = '<button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button><button type="button" class="btn btn-danger" onclick="return simpan_merge()">Simpan</button>';
+			}
+			
+		});
+	}
+	
+</script>
